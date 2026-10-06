@@ -1,0 +1,25 @@
+{
+  "type": "object",
+  "properties": {
+    "content": {
+      "type": "string",
+      "description": "Financial research text content to store in long-term vector memory"
+    },
+    "ticker": {
+      "type": "string",
+      "description": "Company ticker symbol (e.g. MSFT, AAPL, TSLA)"
+    },
+    "source_type": {
+      "type": "string",
+      "enum": ["10-K", "10-Q", "8-K", "earnings_call", "news", "analysis"],
+      "description": "Type of source document"
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0.0,
+      "maximum": 1.0,
+      "description": "Agent confidence score in this information (0.0 - 1.0)"
+    }
+  },
+  "required": ["content", "ticker", "source_type"]
+}
