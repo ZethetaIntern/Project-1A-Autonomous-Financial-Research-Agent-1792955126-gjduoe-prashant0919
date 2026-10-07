@@ -1,0 +1,15 @@
+{
+  "type": "object",
+  "properties": {
+    "calculation_type": {
+      "type": "string",
+      "enum": ["dcf", "ratios", "cagr", "arithmetic", "margin_analysis"],
+      "description": "Financial calculation type to execute"
+    },
+    "inputs": {
+      "type": "object",
+      "description": "Dictionary of numeric and financial parameters for the calculation"
+    }
+  },
+  "required": ["calculation_type", "inputs"]
+}

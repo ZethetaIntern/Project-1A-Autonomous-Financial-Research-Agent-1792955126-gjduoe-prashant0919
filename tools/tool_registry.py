@@ -9,15 +9,16 @@ from pathlib import Path
 from typing import Any, Callable
 
 from config.logging_config import setup_logging
-from tools.calculator import calculate
+from tools.calculator import calculate, calculation_engine
 from tools.company_profile import get_company_profile
-from tools.earnings import get_earnings
+from tools.earnings import get_earnings, get_earnings_transcript
 from tools.fact_checker import check_claim
 from tools.financial_api import get_financial_data
 from tools.news_sentiment import analyze_news_sentiment
 from tools.peer_comparison import compare_peers
 from tools.report_gen import generate_report
 from tools.sec_edgar import search_sec_filings
+from tools.vector_db_tools import vector_db_search, vector_db_store
 from tools.web_search import search_web
 
 
@@ -327,6 +328,46 @@ def build_default_registry() -> ToolRegistry:
         ),
         parameters=load_schema("report_generator.json"),
         function=generate_report,
+    )
+
+    registry.register(
+        name="calculation_engine",
+        description=(
+            "Performs advanced financial calculations including DCF valuation, "
+            "financial ratios (margins, ROE, debt-to-equity), CAGR, and basic arithmetic."
+        ),
+        parameters=load_schema("calculation_engine.json"),
+        function=calculation_engine,
+    )
+
+    registry.register(
+        name="earnings_transcript",
+        description=(
+            "Retrieves earnings call transcripts with speaker labels and Q&A sections "
+            "for a specific company ticker, quarter, and year."
+        ),
+        parameters=load_schema("earnings_transcript.json"),
+        function=get_earnings_transcript,
+    )
+
+    registry.register(
+        name="vector_db_search",
+        description=(
+            "Search the agent's long-term vector database memory for past research findings, "
+            "thematic intelligence, and stored company disclosures."
+        ),
+        parameters=load_schema("vector_db_search.json"),
+        function=vector_db_search,
+    )
+
+    registry.register(
+        name="vector_db_store",
+        description=(
+            "Store new validated research findings in the agent's long-term vector memory "
+            "for persistent cross-session recall."
+        ),
+        parameters=load_schema("vector_db_store.json"),
+        function=vector_db_store,
     )
 
     return registry

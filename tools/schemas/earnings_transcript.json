@@ -1,0 +1,19 @@
+{
+  "type": "object",
+  "properties": {
+    "ticker": {
+      "type": "string",
+      "description": "Stock ticker symbol (e.g., AAPL, MSFT, TSLA)"
+    },
+    "quarter": {
+      "type": "string",
+      "enum": ["Q1", "Q2", "Q3", "Q4"],
+      "description": "Fiscal quarter"
+    },
+    "year": {
+      "type": "integer",
+      "description": "Fiscal year (e.g., 2024, 2025, 2026)"
+    }
+  },
+  "required": ["ticker", "quarter", "year"]
+}
