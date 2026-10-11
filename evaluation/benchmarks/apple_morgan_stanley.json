@@ -1,0 +1,32 @@
+{
+  "benchmark_id": "BM-02-AAPL-MS",
+  "company": "Apple Inc.",
+  "ticker": "AAPL",
+  "author": "Morgan Stanley Equity Research Analyst",
+  "document_type": "Quarterly Earnings & Guidance Analysis",
+  "target_page_length": 8,
+  "scoring": {
+    "factual_accuracy": 98.8,
+    "completeness": 94.5,
+    "analytical_depth": 95.0,
+    "coherence_and_structure": 97.5,
+    "composite_rqb_score": 96.2
+  },
+  "key_metrics": {
+    "q3_revenue_b": 109.4,
+    "diluted_eps": 2.02,
+    "consensus_eps_estimate": 1.89,
+    "eps_surprise_pct": 6.74,
+    "gross_margin_pct": 50.1,
+    "tariff_benefit_bps": 200
+  },
+  "core_thesis": "Apple delivered a high-quality EPS beat driven by Services momentum and hardware replacement cycles, with non-recurring tariff settlement adjustments accounting for 200 bps of margin expansion.",
+  "required_sections": [
+    "Executive Summary",
+    "Quarterly Results vs Consensus",
+    "Segment Breakdown (iPhone, Mac, Services)",
+    "Earnings Call Commentary & Forward Guidance",
+    "Gross Margin Quality Analysis",
+    "Risks & Supply Chain Observations"
+  ]
+}

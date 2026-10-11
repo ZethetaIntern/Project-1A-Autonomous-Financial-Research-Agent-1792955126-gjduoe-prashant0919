@@ -1,0 +1,31 @@
+{
+  "benchmark_id": "BM-01-MSFT-GS",
+  "company": "Microsoft Corporation",
+  "ticker": "MSFT",
+  "author": "Goldman Sachs Equity Research Associate",
+  "document_type": "Company Profile & Investment Memorandum",
+  "target_page_length": 12,
+  "scoring": {
+    "factual_accuracy": 99.2,
+    "completeness": 96.0,
+    "analytical_depth": 92.5,
+    "coherence_and_structure": 98.0,
+    "composite_rqb_score": 95.8
+  },
+  "key_metrics": {
+    "market_cap": 3964424683520,
+    "pe_ratio": 29.74,
+    "forward_pe": 22.54,
+    "dividend_yield": 0.0072,
+    "cloud_revenue_run_rate_b": 140.0
+  },
+  "core_thesis": "Microsoft maintains durable competitive moats in enterprise cloud, AI productivity copilots, and enterprise SaaS infrastructure with industry-leading ROIC.",
+  "required_sections": [
+    "Executive Summary",
+    "Business Overview & Segment Breakdown",
+    "Financial Summary & Valuation",
+    "Executive Leadership & Governance",
+    "Competitive Advantages (Moats)",
+    "Risk Factors & Headwinds"
+  ]
+}

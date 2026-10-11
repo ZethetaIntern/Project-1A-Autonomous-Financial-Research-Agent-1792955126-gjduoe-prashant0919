@@ -1,0 +1,30 @@
+{
+  "benchmark_id": "BM-03-CLOUD-GARTNER",
+  "comparison": "Cloud Infrastructure Hyperscalers: AWS vs Azure vs GCP",
+  "tickers": ["AMZN", "MSFT", "GOOGL"],
+  "author": "Gartner Senior Research Director",
+  "document_type": "Sector Magic Quadrant & Comparative Hyperscaler Analysis",
+  "target_page_length": 15,
+  "scoring": {
+    "factual_accuracy": 98.0,
+    "completeness": 97.0,
+    "analytical_depth": 96.5,
+    "coherence_and_structure": 96.0,
+    "composite_rqb_score": 96.8
+  },
+  "market_shares": {
+    "aws": 31.0,
+    "azure": 25.0,
+    "gcp": 11.0,
+    "others": 33.0
+  },
+  "core_thesis": "AWS retains market leadership through ecosystem breadth and custom silicon (Trainium/Inferentia); Azure is closing the gap through aggressive OpenAI integration and enterprise footprint; GCP accelerates via Vertex AI and TPU v5e/p infrastructure.",
+  "required_sections": [
+    "Executive Overview",
+    "Hyperscaler Revenue & Growth Dynamics",
+    "Operating Margins & Capital Intensity (CapEx)",
+    "AI Platform Capabilities (Bedrock vs Azure OpenAI vs Vertex AI)",
+    "Competitive Advantages & Moats",
+    "Strategic Risk Matrix & Outlook"
+  ]
+}
