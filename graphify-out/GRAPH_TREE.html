@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>/ — graphify tree viewer</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f9f9f9;
+      color: #333;
+    }
+    h1 {
+      margin: 20px 0 0 24px;
+      font-size: 2.2rem;
+      font-weight: bold;
+      color: #1e3a56;
+    }
+    .controls {
+      margin: 20px 0 15px 24px;
+    }
+    button {
+      margin-right: 10px;
+      padding: 8px 18px;
+      background: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: background 0.2s ease-in-out;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    button:active {
+      background: #004085;
+    }
+    #tree-container {
+      width: calc(100vw - 48px); /* Adjust for body margin/padding */
+      height: 85vh;
+      overflow: auto;
+      border-radius: 8px;
+      background: #fff;
+      margin-left: 24px;
+      margin-right: 24px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      border: 1px solid #ddd;
+    }
+    svg {
+      background: #fff;
+      border-radius: 8px;
+      display: block; /* Important for D3 */
+    }
+    .node circle {
+      stroke-width: 2.5px;
+    }
+    .node text { /* Base style for the <text> container */
+      font: 13px 'Segoe UI', sans-serif;
+      paint-order: stroke fill; /* Ensures text is readable over lines */
+      stroke: #fff; /* White halo */
+      stroke-width: 3px; /* Halo thickness */
+      stroke-linejoin: round;
+      stroke-opacity: 0.85; /* Halo opacity */
+    }
+    .link {
+      fill: none;
+      stroke-opacity: 0.7;
+      stroke-width: 2px;
+    }
+  </style>
+</head>
+<body>
+  <h1>/ — Knowledge Graph</h1>
+  <div class="controls">
+    <button onclick="expandAll()">Expand All</button>
+    <button onclick="collapseAll()">Collapse All</button>
+    <button onclick="resetView()">Reset View</button>
+  </div>
+  <div id="tree-container">
+    <svg id="tree-svg" width="6000" height="8000"></svg>
+  </div>
+
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script>
+    const initialJsonData = {"name":"/","total_count":412,"children":[{"name":"agent","total_count":91,"children":[{"name":"circuit_breaker.py","total_count":19,"children":[{"name":".__init__()","total_count":1,"children":[]},{"name":".__init__()","total_count":1,"children":[]},{"name":"._handle_failure()","total_count":1,"children":[]},{"name":"._handle_success()","total_count":1,"children":[]},{"name":".call()","total_count":1,"children":[]},{"name":".get_breaker()","total_count":1,"children":[]},{"name":".is_available()","total_count":1,"children":[]},{"name":"Check whether a tool is currently eligible for calls.","total_count":1,"children":[]},{"name":"Circuit breaker pattern preventing cascading failures across agent tool\u2026","total_count":1,"children":[]},{"name":"CircuitBreakerOpenError","total_count":1,"children":[]},{"name":"CircuitBreakerRegistry","total_count":1,"children":[]},{"name":"CircuitState","total_count":1,"children":[]},{"name":"Execute the function protected by the circuit breaker.","total_count":1,"children":[]},{"name":"Get or initialize a breaker for a tool.","total_count":1,"children":[]},{"name":"Manages circuit breakers for all registered tools.","total_count":1,"children":[]},{"name":"Monitors failures for a specific tool and trips when thresholds are exceeded.","total_count":1,"children":[]},{"name":"Possible states for a circuit breaker.","total_count":1,"children":[]},{"name":"Raised when an operation is attempted while the circuit breaker is OPEN.","total_count":1,"children":[]},{"name":"ToolCircuitBreaker","total_count":1,"children":[]}]},{"name":"core.py","total_count":11,"children":[{"name":".__init__()","total_count":1,"children":[]},{"name":".run()","total_count":1,"children":[]},{"name":"AgentError","total_count":1,"children":[]},{"name":"Core loop for the autonomous financial research agent.","total_count":1,"children":[]},{"name":"Create an agent using the default or provided LLM client and tool registry.","total_count":1,"children":[]},{"name":"create_agent()","total_count":1,"children":[]},{"name":"FinancialResearchAgent","total_count":1,"children":[]},{"name":"Gather research evidence and synthesize a final answer.","total_count":1,"children":[]},{"name":"make_result()","total_count":1,"children":[]},{"name":"Raised when the agent cannot process an LLM response.","total_count":1,"children":[]},{"name":"Run the research workflow and return its answer and evidence.","total_count":1,"children":[]}]},{"name":"disambiguation.py","total_count":7,"children":[{"name":".disambiguate()","total_count":1,"children":[]},{"name":"Disambiguation logic, documented assumptions, and financial edge case handling.","total_count":1,"children":[]},{"name":"DisambiguationResult","total_count":1,"children":[]},{"name":"Process a query analysis and produce structured disambiguation logic.","total_count":1,"children":[]},{"name":"QueryDisambiguator","total_count":1,"children":[]},{"name":"Resolves ambiguity, documents assumptions, and handles financial edge cases\u2026","total_count":1,"children":[]},{"name":"The result of disambiguating an ambiguous query or financial edge case.","total_count":1,"children":[]}]},{"name":"error_handler.py","total_count":22,"children":[{"name":".__init__()","total_count":1,"children":[]},{"name":".__init__()","total_count":1,"children":[]},{"name":".__init__()","total_count":1,"children":[]},{"name":".__init__()","total_count":1,"children":[]},{"name":".__init__()","total_count":1,"children":[]},{"name":".execute_with_retry()","total_count":1,"children":[]},{"name":".get_recovery_metrics()","total_count":1,"children":[]},{"name":"Base exception for research agent errors.","total_count":1,"children":[]},{"name":"Canonical classification of agent errors (Section A4.2).","total_count":1,"children":[]},{"name":"Compute error recovery statistics (Metric AB-2).","total_count":1,"children":[]},{"name":"DataQualityError","total_count":1,"children":[]},{"name":"Error handling, categorization, and exponential backoff retry logic.","total_count":1,"children":[]},{"name":"ErrorCategory","total_count":1,"children":[]},{"name":"ErrorHandler","total_count":1,"children":[]},{"name":"Execute a callable with exponential backoff and jitter (Section A4.3).","total_count":1,"children":[]},{"name":"Manages error classification, backoff retries with jitter, and recovery\u2026","total_count":1,"children":[]},{"name":"Raised when an external tool or API fails.","total_count":1,"children":[]},{"name":"Raised when data cannot be validated or contains severe inconsistencies.","total_count":1,"children":[]},{"name":"Raised when the LLM produces malformed or circular actions.","total_count":1,"children":[]},{"name":"ReasoningError","total_count":1,"children":[]},{"name":"ResearchAgentError","total_count":1,"children":[]},{"name":"ToolExecutionError","total_count":1,"children":[]}]},{"name":"fallback_chains.py","total_count":12,"children":[{"name":".__init__()","total_count":1,"children":[]},{"name":".execute_with_fallback()","total_count":1,"children":[]},{"name":".generate_graceful_degradation_report()","total_count":1,"children":[]},{"name":".get_fallback_tools()","total_count":1,"children":[]},{"name":"Attempt primary tool, cascading to fallbacks on failure.","total_count":1,"children":[]},{"name":"Fallback tool chains and graceful degradation protocol for research execution.","total_count":1,"children":[]},{"name":"FallbackChainManager","total_count":1,"children":[]},{"name":"FallbackExecutionResult","total_count":1,"children":[]},{"name":"Orchestrates multi-level tool fallbacks and generates graceful degradation logs.","total_count":1,"children":[]},{"name":"Produce markdown disclosure of all fallback events and omissions (Section A4.3).","total_count":1,"children":[]},{"name":"Return the sequence of fallback tools for a primary tool.","total_count":1,"children":[]},{"name":"The outcome of executing a tool or its downstream fallback chain.","total_count":1,"children":[]}]},{"name":"parser.py","total_count":7,"children":[{"name":"Parse a JSON tool call, JSON final answer, or plain-text answer.","total_count":1,"children":[]},{"name":"Parse LLM responses into tool calls or final answers.","total_count":1,"children":[]},{"name":"parse_response()","total_count":1,"children":[]},{"name":"ParsedResponse","total_count":1,"children":[]},{"name":"Raised when an LLM response cannot be parsed safely.","total_count":1,"children":[]},{"name":"Represent a parsed agent response.","total_count":1,"children":[]},{"name":"ResponseParseError","total_count":1,"children":[]}]},{"name":"prompts.py","total_count":3,"children":[{"name":"Build the system prompt with the available tool descriptions.","total_count":1,"children":[]},{"name":"build_system_prompt()","total_count":1,"children":[]},{"name":"System prompts for the autonomous financial research agent.","total_count":1,"children":[]}]},{"name":"query_analyzer.py","total_count":9,"children":[{"name":".analyze()","total_count":1,"children":[]},{"name":"Analyzes and classifies incoming financial research prompts (Day 10).","total_count":1,"children":[]},{"name":"Classify query intent, complexity, ambiguity, and entities.","total_count":1,"children":[]},{"name":"Query analyzer assessing query intent, entity extraction, complexity, and\u2026","total_count":1,"children":[]},{"name":"QueryAnalysis","total_count":1,"children":[]},{"name":"QueryAnalyzer","total_count":1,"children":[]},{"name":"QueryType","total_count":1,"children":[]},{"name":"Supported financial research query archetypes.","total_count":1,"children":[]},{"name":"The structured classification result of an incoming research query.","total_count":1,"children":[]}]},{"name":"__init__.py","total_count":1,"children":[]}]},{"name":"config","total_count":8,"children":[{"name":"logging_config.py","total_count":3,"children":[{"name":"Centralized logging configuration for the financial research agent.","total_count":1,"children":[]},{"name":"Configure console and rotating file logging.","total_count":1,"children":[]},{"name":"setup_logging()","total_count":1,"children":[]}]},{"name":"settings.py","total_count":4,"children":[{"name":"_get_int()","total_count":1,"children":[]},{"name":"Read an integer environment variable with a helpful error.","total_count":1,"children":[]},{"name":"Validate supported providers and optional API-key requirements.","total_count":1,"children":[]},{"name":"validate_settings()","total_count":1,"children":[]}]},{"name":"__init__.py","total_count":1,"children":[]}]},{"name":"evaluation","total_count":19,"children":[{"name":"dashboard.py","total_count":3,"children":[{"name":"Evaluate all 8 challenges and generate markdown and HTML scorecards.","total_count":1,"children":[]},{"name":"Evaluation dashboard generator producing Markdown and HTML visual reports\u2026","total_count":1,"children":[]},{"name":"generate_evaluation_summary()","total_count":1,"children":[]}]},{"name":"metrics.py","total_count":15,"children":[{"name":".calculate_error_recovery_rate()","total_count":1,"children":[]},{"name":".calculate_memory_utilization()","total_count":1,"children":[]},{"name":".calculate_tool_efficiency()","total_count":1,"children":[]},{"name":".compute_composite_rqb_score()","total_count":1,"children":[]},{"name":".evaluate_report_text()","total_count":1,"children":[]},{"name":"Analyze markdown report text and tool logs to compute all 22 metrics.","total_count":1,"children":[]},{"name":"Calculate AB-1 Tool Efficiency (useful / total).","total_count":1,"children":[]},{"name":"Calculate AB-2 Error Recovery Rate.","total_count":1,"children":[]},{"name":"Calculate AB-4 Memory Utilization using the corrected ratio formula.","total_count":1,"children":[]},{"name":"Calculates all 22 quality metrics across agent outputs and benchmarks.","total_count":1,"children":[]},{"name":"Comprehensive evaluation framework implementing 22 quality metrics and Research\u2026","total_count":1,"children":[]},{"name":"Compute the weighted composite Research Quality Board score.","total_count":1,"children":[]},{"name":"Consolidated scorecard across all 5 evaluation dimensions.","total_count":1,"children":[]},{"name":"EvaluationFramework","total_count":1,"children":[]},{"name":"QualityMetricsReport","total_count":1,"children":[]}]},{"name":"__init__.py","total_count":1,"children":[]}]},{"name":"llm","total_count":18,"children":[{"name":"client.py","total_count":17,"children":[{"name":".__init__()","total_count":1,"children":[]},{"name":"._run_with_retry()","total_count":1,"children":[]},{"name":".complete()","total_count":1,"children":[]},{"name":".get_usage()","total_count":1,"children":[]},{"name":".total_tokens()","total_count":1,"children":[]},{"name":"_adaptive_wait()","total_count":1,"children":[]},{"name":"_is_retryable()","total_count":1,"children":[]},{"name":"A consistent response format across supported LLM providers.","total_count":1,"children":[]},{"name":"Call multiple LLM providers through LiteLLM.","total_count":1,"children":[]},{"name":"Generate a response and record provider-reported usage.","total_count":1,"children":[]},{"name":"LLMClient","total_count":1,"children":[]},{"name":"LLMResponse","total_count":1,"children":[]},{"name":"Provider-independent LLM client with retries and usage tracking.","total_count":1,"children":[]},{"name":"Retry transient failures and rate limits with adaptive backoff.","total_count":1,"children":[]},{"name":"Retry transient network, server errors, and rate limits (Section A4.3).","total_count":1,"children":[]},{"name":"Return cumulative usage for this client instance.","total_count":1,"children":[]},{"name":"Return the combined input and output token count.","total_count":1,"children":[]}]},{"name":"__init__.py","total_count":1,"children":[]}]},{"name":"main.py","total_count":10,"children":[{"name":"Autonomous Financial Research Agent (ARA-1) - Unified CLI Entry Point.\u2026","total_count":1,"children":[]},{"name":"Execute a specific challenge with the autonomous agent.","total_count":1,"children":[]},{"name":"Execute an arbitrary user query with full tool registry.","total_count":1,"children":[]},{"name":"main()","total_count":1,"children":[]},{"name":"Run evaluation framework across all 8 challenges.","total_count":1,"children":[]},{"name":"Run full pytest test suite.","total_count":1,"children":[]},{"name":"run_agent_challenge()","total_count":1,"children":[]},{"name":"run_custom_query()","total_count":1,"children":[]},{"name":"run_eval()","total_count":1,"children":[]},{"name":"run_tests()","total_count":1,"children":[]}]},{"name":"memory","total_count":50,"children":[{"name":"context_manager.py","total_count":21,"children":[{"name":".__init__()","total_count":1,"children":[]},{"name":".__post_init__()","total_count":1,"children":[]},{"name":"._prune_partition()","total_count":1,"children":[]},{"name":"._summarize_evicted()","total_count":1,"children":[]},{"name":".add_chunk()","total_count":1,"children":[]},{"name":".assemble_context()","total_count":1,"children":[]},{"name":".clear()","total_count":1,"children":[]},{"name":".get_token_usage_stats()","total_count":1,"children":[]},{"name":".is_primary_source()","total_count":1,"children":[]},{"name":"A tagged piece of research evidence managed within short-term memory.","total_count":1,"children":[]},{"name":"Add a chunk of evidence to the appropriate memory partition.","total_count":1,"children":[]},{"name":"Assemble current working context respecting diversity, recency, and budgeting.","total_count":1,"children":[]},{"name":"Clear all working memory partitions.","total_count":1,"children":[]},{"name":"ContextChunk","total_count":1,"children":[]},{"name":"ContextManager","total_count":1,"children":[]},{"name":"Determine whether a source type is classified as primary data.","total_count":1,"children":[]},{"name":"Manages short-term working memory, token budgets, and context window limits.","total_count":1,"children":[]},{"name":"Progressively summarize evicted context items to preserve historical facts.","total_count":1,"children":[]},{"name":"Prune chunks in a partition if they exceed token budget using recency and\u2026","total_count":1,"children":[]},{"name":"Return token utilization metrics across all memory partitions.","total_count":1,"children":[]},{"name":"Short-term memory management and context budgeting for financial research.","total_count":1,"children":[]}]},{"name":"episodic.py","total_count":15,"children":[{"name":".__init__()","total_count":1,"children":[]},{"name":"._load()","total_count":1,"children":[]},{"name":".clear()","total_count":1,"children":[]},{"name":".get_all_episodes()","total_count":1,"children":[]},{"name":".get_strategy_recommendation()","total_count":1,"children":[]},{"name":".record_episode()","total_count":1,"children":[]},{"name":".save()","total_count":1,"children":[]},{"name":"A recorded research episode capturing query context, tool path, and outcomes.","total_count":1,"children":[]},{"name":"Add and persist a new episode.","total_count":1,"children":[]},{"name":"Episode","total_count":1,"children":[]},{"name":"Episodic memory recording research strategies, query types, and process\u2026","total_count":1,"children":[]},{"name":"EpisodicMemory","total_count":1,"children":[]},{"name":"Persists and retrieves episodic execution memories to guide future planning.","total_count":1,"children":[]},{"name":"Recommend optimal tool sequence and precautions based on historical episodes.","total_count":1,"children":[]},{"name":"Return all recorded episodes.","total_count":1,"children":[]}]},{"name":"vector_store.py","total_count":13,"children":[{"name":".__init__()","total_count":1,"children":[]},{"name":"._validate_record()","total_count":1,"children":[]},{"name":".add_record()","total_count":1,"children":[]},{"name":".count()","total_count":1,"children":[]},{"name":".get_record()","total_count":1,"children":[]},{"name":".search()","total_count":1,"children":[]},{"name":"FinancialVectorStore","total_count":1,"children":[]},{"name":"Find semantically similar findings, optionally filtering metadata.","total_count":1,"children":[]},{"name":"Persistent ChromaDB vector store for financial research memory.","total_count":1,"children":[]},{"name":"Retrieve a stored finding by its ID.","total_count":1,"children":[]},{"name":"Return the number of stored findings.","total_count":1,"children":[]},{"name":"Store and retrieve financial research findings using ChromaDB.","total_count":1,"children":[]},{"name":"Validate and persist one finding; Chroma generates its embedding.","total_count":1,"children":[]}]},{"name":"__init__.py","total_count":1,"children":[]}]},{"name":"pyproject.toml","total_count":1,"children":[{"name":"autonomous-financial-research-agent","total_count":1,"children":[]}]},{"name":"scripts","total_count":6,"children":[{"name":"run_challenge1.py","total_count":3,"children":[{"name":"Execute Challenge 1 and persist its result.","total_count":1,"children":[]},{"name":"main()","total_count":1,"children":[]},{"name":"Run Challenge 1 and save the raw research result.","total_count":1,"children":[]}]},{"name":"run_challenge3.py","total_count":3,"children":[{"name":"Execute Challenge 3 and persist its result.","total_count":1,"children":[]},{"name":"main()","total_count":1,"children":[]},{"name":"Run Challenge 3 (Tesla Risk Assessment) and save the research result.","total_count":1,"children":[]}]}]},{"name":"setup.py","total_count":1,"children":[{"name":"Setup configuration for the autonomous financial research agent package.","total_count":1,"children":[]}]},{"name":"synthesis","total_count":32,"children":[{"name":"conflict_resolver.py","total_count":14,"children":[{"name":".__init__()","total_count":1,"children":[]},{"name":".classify_source_tier()","total_count":1,"children":[]},{"name":".resolve()","total_count":1,"children":[]},{"name":"A data point tagged with source identity, tier, timestamp, and period.","total_count":1,"children":[]},{"name":"Apply the 6-step resolution protocol to conflicting data points.","total_count":1,"children":[]},{"name":"Classify a source into its canonical trustworthiness tier.","total_count":1,"children":[]},{"name":"ConflictResolution","total_count":1,"children":[]},{"name":"ConflictResolver","total_count":1,"children":[]},{"name":"Executes the systematic 6-step conflict resolution protocol (Section A6.3).","total_count":1,"children":[]},{"name":"Multi-source conflict resolution protocol for financial research data.","total_count":1,"children":[]},{"name":"ReliabilityTier","total_count":1,"children":[]},{"name":"Source reliability tier hierarchy according to Section A6.2 (Corrected).","total_count":1,"children":[]},{"name":"SourceDataPoint","total_count":1,"children":[]},{"name":"The result of resolving a conflict between disparate source observations.","total_count":1,"children":[]}]},{"name":"engine.py","total_count":8,"children":[{"name":".__init__()","total_count":1,"children":[]},{"name":".synthesize_research_package()","total_count":1,"children":[]},{"name":".triangulate_numerical_metric()","total_count":1,"children":[]},{"name":"Extract multi-source signals and synthesize findings into unified research\u2026","total_count":1,"children":[]},{"name":"Multi-source synthesis engine integrating conflict resolution, triangulation,\u2026","total_count":1,"children":[]},{"name":"MultiSourceSynthesisEngine","total_count":1,"children":[]},{"name":"Orchestrates comprehensive cross-source data fusion, triangulation, and\u2026","total_count":1,"children":[]},{"name":"Triangulate a numeric metric across 3+ sources (Section A6.4 Quantitative\u2026","total_count":1,"children":[]}]},{"name":"narrative.py","total_count":9,"children":[{"name":".analyze_sentiment_fact_alignment()","total_count":1,"children":[]},{"name":".thread_narrative()","total_count":1,"children":[]},{"name":"A coherent analytical thread weaving qualitative and quantitative evidence.","total_count":1,"children":[]},{"name":"Construct a unified narrative thread from multi-source evidence.","total_count":1,"children":[]},{"name":"Detect alignment or divergence between financial fundamentals and qualitative\u2026","total_count":1,"children":[]},{"name":"Narrative threading and sentiment-fact divergence detection for multi-source\u2026","total_count":1,"children":[]},{"name":"NarrativeSynthesizer","total_count":1,"children":[]},{"name":"NarrativeThread","total_count":1,"children":[]},{"name":"Synthesizes narrative threads and checks sentiment-fact alignment (Section\u2026","total_count":1,"children":[]}]},{"name":"__init__.py","total_count":1,"children":[]}]},{"name":"tests","total_count":79,"children":[{"name":"test_agent.py","total_count":11,"children":[{"name":"Comprehensive tests for agent core loop, error handling, circuit breaker,\u2026","total_count":1,"children":[]},{"name":"failing_call()","total_count":1,"children":[]},{"name":"failing_primary_then_fallback()","total_count":1,"children":[]},{"name":"flaky_func()","total_count":1,"children":[]},{"name":"mock_response()","total_count":1,"children":[]},{"name":"test_agent_core_execution()","total_count":1,"children":[]},{"name":"test_circuit_breaker_transitions()","total_count":1,"children":[]},{"name":"test_error_handler_backoff_and_metrics()","total_count":1,"children":[]},{"name":"test_fallback_chains_execution()","total_count":1,"children":[]},{"name":"test_query_analyzer_and_disambiguation()","total_count":1,"children":[]},{"name":"test_registry()","total_count":1,"children":[]}]},{"name":"test_agent_core.py","total_count":12,"children":[{"name":"mock_company_profile()","total_count":1,"children":[]},{"name":"mock_registry()","total_count":1,"children":[]},{"name":"mock_response()","total_count":1,"children":[]},{"name":"test_agent_continues_after_tool_failure()","total_count":1,"children":[]},{"name":"test_agent_rejects_empty_query()","total_count":1,"children":[]},{"name":"test_agent_stops_at_iteration_limit()","total_count":1,"children":[]},{"name":"test_agent_wraps_invalid_json_response()","total_count":1,"children":[]},{"name":"test_microsoft_profile_workflow()","total_count":1,"children":[]},{"name":"test_parser_handles_commentary_with_json_fence()","total_count":1,"children":[]},{"name":"test_parser_handles_xml_tool_call_tag()","total_count":1,"children":[]},{"name":"test_parser_handles_xml_with_markdown_fence()","total_count":1,"children":[]},{"name":"Tests for the financial research agent core loop.","total_count":1,"children":[]}]},{"name":"test_llm_client.py","total_count":17,"children":[{"name":"A missing API key should stop the request before LiteLLM.","total_count":1,"children":[]},{"name":"A new client should start with zero recorded usage.","total_count":1,"children":[]},{"name":"A successful mocked response should update usage counters.","total_count":1,"children":[]},{"name":"A temporary server error should trigger a retry.","total_count":1,"children":[]},{"name":"An empty prompt should fail before calling the provider.","total_count":1,"children":[]},{"name":"Build a mock LiteLLM response without making an API call.","total_count":1,"children":[]},{"name":"fake_response()","total_count":1,"children":[]},{"name":"test_client_initializes_with_zero_usage()","total_count":1,"children":[]},{"name":"test_empty_prompt_is_rejected()","total_count":1,"children":[]},{"name":"test_invalid_max_tokens_is_rejected()","total_count":1,"children":[]},{"name":"test_missing_provider_key_is_rejected_without_api_call()","total_count":1,"children":[]},{"name":"test_multiple_successful_calls_accumulate_usage()","total_count":1,"children":[]},{"name":"test_successful_response_records_token_usage()","total_count":1,"children":[]},{"name":"test_temporary_server_error_is_retried()","total_count":1,"children":[]},{"name":"Tests for the provider-independent LLM client.","total_count":1,"children":[]},{"name":"The maximum token limit must be positive.","total_count":1,"children":[]},{"name":"Token usage should accumulate across successful calls.","total_count":1,"children":[]}]},{"name":"test_memory.py","total_count":7,"children":[{"name":"Comprehensive tests for three-layer memory system (vector store, context\u2026","total_count":1,"children":[]},{"name":"temp_dir()","total_count":1,"children":[]},{"name":"test_context_manager_budgeting()","total_count":1,"children":[]},{"name":"test_context_manager_pruning_and_summarization()","total_count":1,"children":[]},{"name":"test_episodic_memory()","total_count":1,"children":[]},{"name":"test_vector_db_tools()","total_count":1,"children":[]},{"name":"test_vector_store_add_and_search()","total_count":1,"children":[]}]},{"name":"test_smoke.py","total_count":2,"children":[{"name":"test_project_initialization()","total_count":1,"children":[]},{"name":"Verify that the project test suite is operational.","total_count":1,"children":[]}]},{"name":"test_synthesis.py","total_count":10,"children":[{"name":"engine()","total_count":1,"children":[]},{"name":"narrative()","total_count":1,"children":[]},{"name":"resolver()","total_count":1,"children":[]},{"name":"test_conflict_resolver_highest_tier_rule()","total_count":1,"children":[]},{"name":"test_conflict_resolver_restatement()","total_count":1,"children":[]},{"name":"test_conflict_resolver_temporal_difference()","total_count":1,"children":[]},{"name":"test_conflict_resolver_tier_classification()","total_count":1,"children":[]},{"name":"test_quantitative_triangulation()","total_count":1,"children":[]},{"name":"test_sentiment_fact_divergence()","total_count":1,"children":[]},{"name":"Tests for the multi-source synthesis engine, conflict resolver, and narrative\u2026","total_count":1,"children":[]}]},{"name":"test_tools.py","total_count":11,"children":[{"name":"registry()","total_count":1,"children":[]},{"name":"test_calculator_executes_successfully()","total_count":1,"children":[]},{"name":"test_calculator_rejects_string_number()","total_count":1,"children":[]},{"name":"test_company_profile_returns_mock_data()","total_count":1,"children":[]},{"name":"test_fact_checker_does_not_claim_independent_verification()","total_count":1,"children":[]},{"name":"test_registry_contains_expected_tools()","total_count":1,"children":[]},{"name":"test_registry_rejects_invalid_enum_value()","total_count":1,"children":[]},{"name":"test_registry_rejects_missing_required_arguments()","total_count":1,"children":[]},{"name":"test_registry_rejects_unexpected_arguments()","total_count":1,"children":[]},{"name":"test_tool_errors_return_structured_failure()","total_count":1,"children":[]},{"name":"test_unknown_tool_is_rejected()","total_count":1,"children":[]}]},{"name":"test_vector_store.py","total_count":9,"children":[{"name":"store()","total_count":1,"children":[]},{"name":"test_add_and_get_record()","total_count":1,"children":[]},{"name":"test_empty_content_is_rejected()","total_count":1,"children":[]},{"name":"test_invalid_confidence_is_rejected()","total_count":1,"children":[]},{"name":"test_invalid_date_is_rejected()","total_count":1,"children":[]},{"name":"test_search_returns_relevant_record()","total_count":1,"children":[]},{"name":"test_store_initializes_empty_collection()","total_count":1,"children":[]},{"name":"test_unsupported_source_type_is_rejected()","total_count":1,"children":[]},{"name":"Use an isolated temporary ChromaDB database for each test.","total_count":1,"children":[]}]}]},{"name":"tools","total_count":97,"children":[{"name":"calculator.py","total_count":11,"children":[{"name":"Calculate a basic arithmetic operation.","total_count":1,"children":[]},{"name":"Calculate key financial ratios from balance sheet and income statement items.","total_count":1,"children":[]},{"name":"calculate()","total_count":1,"children":[]},{"name":"calculate_cagr()","total_count":1,"children":[]},{"name":"calculate_dcf()","total_count":1,"children":[]},{"name":"calculate_financial_ratios()","total_count":1,"children":[]},{"name":"calculation_engine()","total_count":1,"children":[]},{"name":"Compute Compound Annual Growth Rate (CAGR).","total_count":1,"children":[]},{"name":"Execute high-precision financial calculations with explicit intermediate steps.","total_count":1,"children":[]},{"name":"Perform Discounted Cash Flow (DCF) valuation with intermediate steps. Args:\u2026","total_count":1,"children":[]},{"name":"Safe calculator and advanced financial calculation engine for research analysis.","total_count":1,"children":[]}]},{"name":"company_profile.py","total_count":3,"children":[{"name":"Company profile tool for financial research.","total_count":1,"children":[]},{"name":"get_company_profile()","total_count":1,"children":[]},{"name":"Return a profile for a ticker, using curated data with yfinance fallback.","total_count":1,"children":[]}]},{"name":"earnings.py","total_count":12,"children":[{"name":"_fetch_earnings()","total_count":1,"children":[]},{"name":"_number_or_none()","total_count":1,"children":[]},{"name":"_wait_for_rate_limit()","total_count":1,"children":[]},{"name":"Convert numeric values into finite JSON-safe floats.","total_count":1,"children":[]},{"name":"Fetch annual or quarterly income-statement data.","total_count":1,"children":[]},{"name":"find_value()","total_count":1,"children":[]},{"name":"get_earnings()","total_count":1,"children":[]},{"name":"get_earnings_transcript()","total_count":1,"children":[]},{"name":"Retrieve earnings call transcript with speaker labels and Q&A.","total_count":1,"children":[]},{"name":"Retrieve earnings data for a company and requested period.","total_count":1,"children":[]},{"name":"Retrieve reported earnings fundamentals using Yahoo Finance.","total_count":1,"children":[]},{"name":"Space out requests made by this process.","total_count":1,"children":[]}]},{"name":"fact_checker.py","total_count":3,"children":[{"name":"check_claim()","total_count":1,"children":[]},{"name":"Cross-reference a specific claim against authoritative sources to verify\u2026","total_count":1,"children":[]},{"name":"Fact checker tool for cross-referencing claims and verifying numerical\u2026","total_count":1,"children":[]}]},{"name":"financial_api.py","total_count":8,"children":[{"name":"_fetch_financial_data()","total_count":1,"children":[]},{"name":"_wait_for_rate_limit()","total_count":1,"children":[]},{"name":"Fetch and cache a company's current financial information.","total_count":1,"children":[]},{"name":"get_financial_data()","total_count":1,"children":[]},{"name":"Live financial data retrieval using Yahoo Finance via yfinance.","total_count":1,"children":[]},{"name":"number_or_none()","total_count":1,"children":[]},{"name":"Retrieve financial metrics for a company ticker.","total_count":1,"children":[]},{"name":"Space out requests made by this process.","total_count":1,"children":[]}]},{"name":"news_sentiment.py","total_count":7,"children":[{"name":"_fetch_news()","total_count":1,"children":[]},{"name":"_score_headlines()","total_count":1,"children":[]},{"name":"Analyze supplied headlines or fetch news and score sentiment.","total_count":1,"children":[]},{"name":"analyze_news_sentiment()","total_count":1,"children":[]},{"name":"Estimate sentiment using TextBlob polarity.","total_count":1,"children":[]},{"name":"Fetch and cache financial news results from Tavily.","total_count":1,"children":[]},{"name":"Retrieve financial news with Tavily and estimate sentiment with TextBlob.","total_count":1,"children":[]}]},{"name":"peer_comparison.py","total_count":3,"children":[{"name":"compare_peers()","total_count":1,"children":[]},{"name":"Peer comparison tool for industry competitive analysis.","total_count":1,"children":[]},{"name":"Prepare a peer comparison matrix with rankings and comparative metrics.","total_count":1,"children":[]}]},{"name":"report_gen.py","total_count":5,"children":[{"name":"Format structured research data into a complete markdown report.","total_count":1,"children":[]},{"name":"format_investment_report()","total_count":1,"children":[]},{"name":"Generate a structured report from supplied research findings or section dict.","total_count":1,"children":[]},{"name":"generate_report()","total_count":1,"children":[]},{"name":"Structured report generator for financial research reports adhering to standard\u2026","total_count":1,"children":[]}]},{"name":"schemas","total_count":1,"children":[{"name":"__init__.py","total_count":1,"children":[]}]},{"name":"sec_edgar.py","total_count":7,"children":[{"name":"_search_cached()","total_count":1,"children":[]},{"name":"_wait_for_rate_limit()","total_count":1,"children":[]},{"name":"Fetch and cache SEC full-text search results.","total_count":1,"children":[]},{"name":"Search SEC EDGAR filings for a ticker or company name.","total_count":1,"children":[]},{"name":"search_sec_filings()","total_count":1,"children":[]},{"name":"SEC EDGAR full-text filing search with caching and rate limiting.","total_count":1,"children":[]},{"name":"Space out SEC requests to avoid sending them too quickly.","total_count":1,"children":[]}]},{"name":"tool_registry.py","total_count":22,"children":[{"name":".__init__()","total_count":1,"children":[]},{"name":"._validate()","total_count":1,"children":[]},{"name":".execute()","total_count":1,"children":[]},{"name":".list_tools()","total_count":1,"children":[]},{"name":".register()","total_count":1,"children":[]},{"name":"build_default_registry()","total_count":1,"children":[]},{"name":"Create a registry containing all available research tools.","total_count":1,"children":[]},{"name":"Load a JSON schema from the schemas directory.","total_count":1,"children":[]},{"name":"load_schema()","total_count":1,"children":[]},{"name":"Raised when a requested tool is not registered.","total_count":1,"children":[]},{"name":"Raised when a tool call has invalid input.","total_count":1,"children":[]},{"name":"Register a tool with its description, schema, and function.","total_count":1,"children":[]},{"name":"Register, validate, and execute research tools.","total_count":1,"children":[]},{"name":"Registry for the financial research agent's tools.","total_count":1,"children":[]},{"name":"Represent a registered research tool.","total_count":1,"children":[]},{"name":"Return tool metadata in function-calling format.","total_count":1,"children":[]},{"name":"Tool","total_count":1,"children":[]},{"name":"ToolNotFoundError","total_count":1,"children":[]},{"name":"ToolRegistry","total_count":1,"children":[]},{"name":"ToolValidationError","total_count":1,"children":[]},{"name":"Validate tool arguments against the supported JSON Schema rules.","total_count":1,"children":[]},{"name":"Validate, execute, and log a research tool call.","total_count":1,"children":[]}]},{"name":"vector_db_tools.py","total_count":7,"children":[{"name":"Get or initialize the shared financial vector store.","total_count":1,"children":[]},{"name":"get_shared_vector_store()","total_count":1,"children":[]},{"name":"Search the agent's long-term vector memory for previously stored research.","total_count":1,"children":[]},{"name":"Store research findings into the agent's long-term vector memory.","total_count":1,"children":[]},{"name":"Vector database tools for the financial research agent.","total_count":1,"children":[]},{"name":"vector_db_search()","total_count":1,"children":[]},{"name":"vector_db_store()","total_count":1,"children":[]}]},{"name":"web_search.py","total_count":7,"children":[{"name":"_search_cached()","total_count":1,"children":[]},{"name":"_wait_for_rate_limit()","total_count":1,"children":[]},{"name":"Fetch and cache normalized Tavily search results.","total_count":1,"children":[]},{"name":"Live web search for financial research using Tavily.","total_count":1,"children":[]},{"name":"Search the web and return normalized results.","total_count":1,"children":[]},{"name":"search_web()","total_count":1,"children":[]},{"name":"Space out requests made by this process.","total_count":1,"children":[]}]},{"name":"__init__.py","total_count":1,"children":[]}]}]};
+
+    function transformData(jsonData) {
+        // Helper function to recursively build the children structure
+        function processNode(node, parentL1StageName) {
+            let displayName = node.name;
+            // Append total_count if it exists and is not already in the name
+            if (node.total_count !== undefined) {
+                if (!/\(Total Count: \d+\)$/.test(displayName)) {
+                    displayName += ` (Total Count: ${node.total_count})`;
+                }
+            }
+
+            const newNode = { name: displayName };
+
+            if (parentL1StageName === "Root") {
+                 newNode.originalStageName = node.name;
+            } else {
+                newNode.originalStageName = parentL1StageName;
+            }
+
+            if (node.children && node.children.length > 0) {
+                const stageNameToPass = (parentL1StageName === "Root") ? node.name : parentL1StageName;
+                newNode.children = node.children.map(child => processNode(child, stageNameToPass));
+            }
+
+            return newNode;
+        }
+
+        let rootDisplayName = jsonData.name;
+        if (jsonData.total_count !== undefined && !/\(Total Count: \d+\)$/.test(rootDisplayName)) {
+            rootDisplayName += ` (Total Count: ${jsonData.total_count})`;
+        }
+
+        return {
+            name: rootDisplayName,
+            originalStageName: "Root",
+            children: (jsonData.children || []).map(child => processNode(child, "Root"))
+        };
+    }
+
+    const treeData = transformData(initialJsonData);
+
+    // Auto-populated phaseColors: every depth-1 child of the root gets
+    // a stable colour from a bigger palette so all top-level dirs are
+    // distinguishable.
+    const PALETTE = [
+      ["#3498DB","#2980B9","#AED6F1"], ["#2ECC71","#27AE60","#A9DFBF"],
+      ["#E74C3C","#C0392B","#F5B7B1"], ["#9B59B6","#8E44AD","#D7BDE2"],
+      ["#F39C12","#D68910","#FAD7A0"], ["#1ABC9C","#117864","#A2D9CE"],
+      ["#34495E","#1B2631","#ABB2B9"], ["#E67E22","#BA4A00","#F5CBA7"],
+      ["#16A085","#0E6655","#A2D9CE"], ["#D35400","#A04000","#EDBB99"],
+      ["#7F8C8D","#566573","#D5DBDB"], ["#C0392B","#7B241C","#F5B7B1"],
+      ["#2E86C1","#1B4F72","#A9CCE3"], ["#28B463","#196F3D","#A9DFBF"],
+      ["#AF7AC5","#6C3483","#D2B4DE"],
+    ];
+    const phaseColors = { "Root": { fill: "#4A4A4A", stroke: "#333333", collapsedFill: "#6C757D" },
+                          "Default": { fill: "#BDC3C7", stroke: "#95A5A6", collapsedFill: "#ECF0F1" } };
+    (initialJsonData.children || []).forEach((c, i) => {
+      const pal = PALETTE[i % PALETTE.length];
+      phaseColors[c.name] = { fill: pal[0], stroke: pal[1], collapsedFill: pal[2] };
+    });
+
+    const levelSpecificPalettes = {
+      0: { fill: "#4A4A4A", stroke: "#333333", collapsedFill: "#6C757D" },
+      2: { fill: "#6ab04c", stroke: "#508a38", collapsedFill: "#a3d391" },
+      3: { fill: "#f0932b", stroke: "#d0730f", collapsedFill: "#f6c07e" },
+      4: { fill: "#be2edd", stroke: "#a01cb3", collapsedFill: "#e08bf2" },
+      5: { fill: "#00a8ff", stroke: "#007ac1", collapsedFill: "#74d2ff" },
+      6: { fill: "#e55039", stroke: "#c23620", collapsedFill: "#f09a8d" },
+      default: { fill: "#747d8c", stroke: "#57606f", collapsedFill: "#a4b0be" }
+    };
+
+    const svgElement = d3.select("#tree-svg");
+    const initialSvgWidth = +svgElement.attr("width");
+    const initialSvgHeight = +svgElement.attr("height");
+    const margin = { top: 40, right: 120, bottom: 80, left: 450 };
+    let width = initialSvgWidth - margin.left - margin.right;
+    let height = initialSvgHeight - margin.top - margin.bottom;
+    const duration = 500;
+    let nodeCounter = 0;
+    const g = svgElement.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
+    const treemap = d3.tree().nodeSize([40, 0]);
+    let rootNode = d3.hierarchy(treeData, d => d.children);
+    rootNode.x0 = 0;
+    rootNode.y0 = 0;
+
+    if (rootNode.children) {
+      rootNode.children.forEach(d_child => {
+        if (d_child.children) { collapseBranch(d_child); }
+      });
+    }
+    updateTree(rootNode);
+
+    function collapseBranch(d) { if (d.children) { d._children = d.children; d._children.forEach(collapseBranch); d.children = null; } }
+    function expandBranch(d) { if (d._children) { d.children = d._children; d._children = null; } if (d.children) { d.children.forEach(expandBranch); } }
+    window.expandAll = () => { expandBranch(rootNode); updateTree(rootNode); };
+    window.collapseAll = () => { if (rootNode.children) { rootNode.children.forEach(collapseBranch); } updateTree(rootNode); };
+    window.resetView = () => { if (rootNode.children) { rootNode.children.forEach(d_child => { if (d_child.children || d_child._children) { collapseBranch(d_child); } }); } if (rootNode._children && !rootNode.children) { rootNode.children = rootNode._children; rootNode._children = null; } updateTree(rootNode); };
+
+    function updateTree(source) {
+      const treeLayoutData = treemap(rootNode);
+      let nodes = treeLayoutData.descendants();
+      let links = treeLayoutData.descendants().slice(1);
+
+      let minX = 0;
+      let maxX = 0;
+      if (nodes.length > 0) {
+        minX = d3.min(nodes, d => d.x);
+        maxX = d3.max(nodes, d => d.x);
+      }
+
+      let neededHeight = Math.max(initialSvgHeight, maxX - minX + margin.top + margin.bottom + 100);
+      svgElement.transition().duration(duration / 2).attr("height", neededHeight);
+      g.transition().duration(duration / 2).attr("transform", `translate(${margin.left},${margin.top - minX + 40})`);
+
+      nodes.forEach(d => { d.y = d.depth * 400; }); // Adjust horizontal separation if needed
+
+      const node = g.selectAll('g.node').data(nodes, d => d.id || (d.id = ++nodeCounter));
+      const nodeEnter = node.enter().append('g')
+        .attr('class', d => "node" + (d.children || d._children ? " node--internal" : " node--leaf") + (d._children ? " _children" : ""))
+        .attr('transform', d => `translate(${source.y0},${source.x0})`)
+        .on('click', (event, d) => { if (d.children) { d._children = d.children; d.children = null; } else if (d._children) { d.children = d._children; d._children = null; } updateTree(d); })
+        .style('cursor', d => (d.children || d._children) ? 'pointer' : 'default');
+
+      nodeEnter.append('circle').attr('r', 1e-6);
+
+      nodeEnter.append('text')
+        .attr('dy', '.35em')
+        .attr('x', d => d.children || d._children ? -14 : 14)
+        .attr('text-anchor', d => d.children || d._children ? 'end' : 'start')
+        .style("fill-opacity", 1e-6)
+        .call(wrapText, 380);
+
+      const nodeUpdate = nodeEnter.merge(node);
+      nodeUpdate.transition().duration(duration)
+        .attr('transform', d => `translate(${d.y},${d.x})`)
+        .attr('class', d => "node" + (d.children ? " node--internal" : " node--leaf") + (d._children ? " node--internal _children" : ""));
+
+      nodeUpdate.select('circle').attr('r', 8.5)
+        .style('fill', d => {
+            let palette;
+            if (d.depth === 0) {
+                palette = levelSpecificPalettes[0];
+            } else if (d.depth === 1) {
+                palette = phaseColors[d.data.originalStageName] || phaseColors.Default;
+            } else {
+                palette = levelSpecificPalettes[d.depth] || levelSpecificPalettes.default;
+            }
+            if (d._children) return palette.collapsedFill;
+            if (d.children) return palette.fill;
+            return "#fff";
+        })
+        .style('stroke', d => {
+            let palette;
+            if (d.depth === 0) {
+                palette = levelSpecificPalettes[0];
+            } else if (d.depth === 1) {
+                palette = phaseColors[d.data.originalStageName] || phaseColors.Default;
+            } else {
+                palette = levelSpecificPalettes[d.depth] || levelSpecificPalettes.default;
+            }
+            return palette.stroke;
+        });
+      nodeUpdate.select('text').style("fill-opacity", 1).call(wrapText, 380);
+
+      const nodeExit = node.exit().transition().duration(duration).attr('transform', d => `translate(${source.y},${source.x})`).remove();
+      nodeExit.select('circle').attr('r', 1e-6);
+      nodeExit.select('text').style('fill-opacity', 1e-6);
+
+      const link = g.selectAll('path.link').data(links, d => d.id);
+      const linkEnter = link.enter().insert('path', "g").attr('class', 'link').attr('d', d => { const o = { x: source.x0, y: source.y0 }; return diagonal(o, o); });
+
+      linkEnter.merge(link).transition().duration(duration).attr('d', d => diagonal(d, d.parent))
+        .style('stroke', d => {
+            const sourceNode = d.parent;
+            if (!sourceNode) return phaseColors.Default.stroke;
+            const l1AncestorName = sourceNode.data.originalStageName;
+            const colorPalette = phaseColors[l1AncestorName] || phaseColors.Default;
+            return colorPalette.stroke;
+        });
+      link.exit().transition().duration(duration).attr('d', d => { const o = { x: source.x, y: source.y }; return diagonal(o, o); }).remove();
+      nodes.forEach(d => { d.x0 = d.x; d.y0 = d.y; });
+    }
+
+    function diagonal(s, d) { return `M ${s.y} ${s.x} C ${(s.y + d.y) / 2} ${s.x}, ${(s.y + d.y) / 2} ${d.x}, ${d.y} ${d.x}`; }
+
+    function wrapText(textElements, maxWidth) {
+        const textPartColors = {
+            name: '#343a40',
+            count: '#0056b3'
+        };
+        const countRegex = /(\s\(Total Count: \d+\))$/;
+
+        textElements.each(function () {
+            const textD3 = d3.select(this);
+            const originalNodeText = textD3.datum().data.name;
+            const x = parseFloat(textD3.attr("x") || 0);
+            const initialDy = textD3.attr("dy");
+            const textAnchor = textD3.attr("text-anchor");
+            const lineHeight = 1.1;
+
+            textD3.text(null);
+
+            let namePart = originalNodeText;
+            let countPartText = "";
+
+            const countMatch = originalNodeText.match(countRegex);
+            if (countMatch && originalNodeText.endsWith(countMatch[0])) {
+                namePart = originalNodeText.substring(0, originalNodeText.length - countMatch[0].length).trim();
+                countPartText = countMatch[0].trim();
+            }
+
+            const tokens = [];
+            namePart.split(/\s+/).filter(Boolean).forEach(word => {
+                tokens.push({ text: word, type: 'name' });
+            });
+            if (countPartText) {
+                tokens.push({ text: countPartText, type: 'count' });
+            }
+
+            if (tokens.length === 0 && originalNodeText) {
+                tokens.push({ text: originalNodeText, type: 'name' });
+            }
+
+            let currentTspan = textD3.append("tspan").attr("x", x).attr("dy", initialDy);
+            if (textAnchor === "end") currentTspan.attr("text-anchor", "end");
+
+            let lineTokens = [];
+
+            for (let i = 0; i < tokens.length; i++) {
+                const tokenObj = tokens[i];
+
+                lineTokens.push(tokenObj);
+                currentTspan.text(lineTokens.map(t => t.text).join(" "));
+
+                if (currentTspan.node().getComputedTextLength() > maxWidth && lineTokens.length > 1) {
+                    lineTokens.pop();
+
+                    currentTspan.text(null);
+                    lineTokens.forEach((prevToken, idx) => {
+                        currentTspan.append("tspan")
+                            .text((idx > 0 ? " " : "") + prevToken.text)
+                            .style("fill", textPartColors[prevToken.type] || textPartColors.name)
+                            .style("font-weight", prevToken.type === 'count' ? "bold" : "normal");
+                    });
+
+                    lineTokens = [tokenObj];
+                    currentTspan = textD3.append("tspan").attr("x", x).attr("dy", lineHeight + "em");
+                    if (textAnchor === "end") currentTspan.attr("text-anchor", "end");
+                }
+            }
+
+            currentTspan.text(null);
+            lineTokens.forEach((token, idx) => {
+                currentTspan.append("tspan")
+                    .text((idx > 0 ? " " : "") + token.text)
+                    .style("fill", textPartColors[token.type] || textPartColors.name)
+                    .style("font-weight", token.type === 'count' ? "bold" : "normal");
+            });
+
+            if (textD3.selectAll("tspan > tspan").empty() && textD3.select("tspan").text().length === 0 && originalNodeText) {
+                let t = textD3.select("tspan");
+                let displayText = originalNodeText;
+                t.text(displayText).style("fill", textPartColors.name);
+                if (t.node() && t.node().getComputedTextLength() > maxWidth && displayText.length > 20) {
+                    let estimatedChars = Math.floor(maxWidth / (t.node().getComputedTextLength()/displayText.length) );
+                    displayText = displayText.substring(0, Math.max(0, estimatedChars - 3)) + "...";
+                    t.text(displayText);
+                }
+            }
+        });
+    }
+  </script>
+</body>
+</html>

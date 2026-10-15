@@ -69,3 +69,6 @@ service-account.json
 
 # Binary documents
 *.pdf
+
+# Graphify cache
+graphify-out/cache/

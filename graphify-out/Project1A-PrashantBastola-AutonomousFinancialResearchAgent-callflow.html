@@ -1,0 +1,2926 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Project1A-PrashantBastola-AutonomousFinancialResearchAgent — Complete Call Flow &amp; Architecture Documentation</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<style>
+:root {
+  --bg: #0f172a; --surface: #1e293b; --border: #334155;
+  --text: #e2e8f0; --muted: #94a3b8; --accent: #38bdf8;
+  --warn: #fbbf24; --err: #f87171; --ok: #34d399;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; }
+.container { max-width: 1200px; margin: 0 auto; padding: 40px 24px; }
+h1 { font-size: 2.4rem; margin-bottom: 8px; background: linear-gradient(135deg, var(--accent), #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+h2 { font-size: 1.7rem; margin: 48px 0 16px; padding-bottom: 8px; border-bottom: 2px solid var(--accent); }
+h3 { font-size: 1.25rem; margin: 32px 0 12px; color: var(--accent); }
+h4 { font-size: 1.05rem; margin: 20px 0 8px; color: var(--warn); }
+p { margin: 8px 0; color: var(--muted); }
+.subtitle { color: var(--muted); font-size: 1.1rem; margin-bottom: 32px; }
+.mermaid { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin: 20px 0; overflow-x: auto; position: relative; }
+.mermaid.is-enhanced { padding: 0; overflow: hidden; min-height: 260px; }
+.mermaid-viewport { padding: 54px 24px 24px; overflow: hidden; cursor: grab; touch-action: none; min-height: 260px; }
+.mermaid-viewport.is-dragging { cursor: grabbing; }
+.mermaid-viewport svg { max-width: none !important; height: auto; transform-origin: 0 0; transition: transform 120ms ease; }
+.mermaid-toolbar { position: absolute; top: 10px; right: 10px; z-index: 3; display: flex; align-items: center; gap: 6px; padding: 6px; background: rgba(15,23,42,0.92); border: 1px solid var(--border); border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,0.28); }
+.mermaid-toolbar button, .mermaid-toolbar .zoom-level { height: 28px; min-width: 32px; border: 1px solid var(--border); border-radius: 6px; background: #1e293b; color: var(--text); font: 600 0.78rem system-ui, sans-serif; display: inline-flex; align-items: center; justify-content: center; }
+.mermaid-toolbar button { cursor: pointer; }
+.mermaid-toolbar button:hover { border-color: var(--accent); color: var(--accent); }
+.mermaid-toolbar .zoom-level { min-width: 52px; color: var(--muted); background: transparent; }
+.call-table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 0.92rem; }
+.call-table th { background: #1a2744; color: var(--accent); text-align: left; padding: 10px 14px; border: 1px solid var(--border); }
+.call-table td { padding: 8px 14px; border: 1px solid var(--border); vertical-align: top; }
+.call-table tr:nth-child(even) { background: rgba(255,255,255,0.02); }
+.tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: 600; }
+.tag-async { background: #7c3aed33; color: #a78bfa; }
+.tag-class { background: #05966933; color: var(--ok); }
+.tag-func { background: #2563eb33; color: var(--accent); }
+.tag-cmd { background: #d9770633; color: var(--warn); }
+.tag-endpoint { background: #dc262633; color: var(--err); }
+.tag-hook { background: #db277733; color: #f472b6; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin: 16px 0; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 16px; margin: 16px 0; }
+.arrow-chain { font-family: 'Fira Code', monospace; font-size: 0.85rem; color: var(--accent); padding: 10px; background: rgba(56,189,248,0.06); border-radius: 6px; }
+code { font-family: 'Fira Code', 'Cascadia Code', monospace; background: rgba(255,255,255,0.06); padding: 1px 6px; border-radius: 3px; font-size: 0.88em; }
+ul, ol { margin: 8px 0 8px 24px; color: var(--muted); }
+li { margin: 4px 0; }
+a { color: var(--accent); }
+hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
+.nav { position: sticky; top: 0; background: var(--bg); z-index: 10; padding: 12px 0; border-bottom: 1px solid var(--border); display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.9rem; }
+.nav a { text-decoration: none; }
+.nav a:hover { text-decoration: underline; }
+@media (max-width: 768px) { .container { padding: 16px; } h1 { font-size: 1.8rem; } }
+
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>Project1A-PrashantBastola-AutonomousFinancialResearchAgent — Complete Call Flow &amp; Architecture Documentation</h1>
+<p class="subtitle">Generated from graphify knowledge graph: 538 nodes, 1012 edges, 32 communities. Commit: 8bd33e5</p>
+
+<div class="nav">
+    <a href="#overview">Architecture Overview</a>
+    <a href="#build-graph">Graph Build</a>
+    <a href="#outputs-docs">Outputs &amp; Docs</a>
+    <a href="#cli-skills">CLI &amp; Skill Installers</a>
+    <a href="#ingest-cache-update">Ingestion &amp; Updates</a>
+    <a href="#serve-api">Serving API</a>
+    <a href="#tests-fixtures">Tests &amp; Fixtures</a>
+    <a href="#calculatorpy-tools-calculate">Calculatorpy Tools Calculate</a>
+    <a href="#logging-config-configpy">Logging Config Configpy</a>
+    <a href="#company-profilepy-tools">Company Profilepy Tools</a>
+    <a href="#setuppy-setup-configuration">Setuppy Setup Configuration</a>
+    <a href="#evaluation">Evaluation</a>
+    <a href="#llm">Llm</a>
+    <a href="#memory">Memory</a>
+    <a href="#autonomous-financial-research">Autonomous Financial Research</a>
+    <a href="#other">Other</a>
+</div>
+
+<!-- ====== Architecture Overview ====== -->
+<h2 id="overview">1. Architecture Overview</h2>
+
+<div class="mermaid">
+
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    BUILD_GRAPH_321CBB04("Graph Build<br/><small>14 nodes</small>")
+    class BUILD_GRAPH_321CBB04 module;
+    OUTPUTS_DOCS_ED82387C("Outputs &amp; Docs<br/><small>7 nodes</small>")
+    class OUTPUTS_DOCS_ED82387C module;
+    CLI_SKILLS_9964CBB8("CLI &amp; Skill Installers<br/><small>153 nodes</small>")
+    class CLI_SKILLS_9964CBB8 module;
+    INGEST_CACHE_UPDATE_FF457338("Ingestion &amp; Updates<br/><small>37 nodes</small>")
+    class INGEST_CACHE_UPDATE_FF457338 module;
+    SERVE_API_35EC8E86("Serving API<br/><small>51 nodes</small>")
+    class SERVE_API_35EC8E86 module;
+    TESTS_FIXTURES_B84B1DCC("Tests &amp; Fixtures<br/><small>235 nodes</small>")
+    class TESTS_FIXTURES_B84B1DCC module;
+    CALCULATORPY_TOOLS_CALCULATE_F1AD47CB("Calculatorpy Tools Calculate<br/><small>15 nodes</small>")
+    class CALCULATORPY_TOOLS_CALCULATE_F1AD47CB module;
+    LOGGING_CONFIG_CONFIGPY_C1FE2F1D("Logging Config Configpy<br/><small>10 nodes</small>")
+    class LOGGING_CONFIG_CONFIGPY_C1FE2F1D module;
+    COMPANY_PROFILEPY_TOOLS_106E83A6("Company Profilepy Tools<br/><small>6 nodes</small>")
+    class COMPANY_PROFILEPY_TOOLS_106E83A6 module;
+    SETUPPY_SETUP_CONFIGURATION_029B1DBA("Setuppy Setup Configuration<br/><small>3 nodes</small>")
+    class SETUPPY_SETUP_CONFIGURATION_029B1DBA module;
+    EVALUATION_90F0F88B("Evaluation<br/><small>1 nodes</small>")
+    class EVALUATION_90F0F88B module;
+    LLM_4CDDC093("Llm<br/><small>1 nodes</small>")
+    class LLM_4CDDC093 module;
+    MEMORY_81C5D49B("Memory<br/><small>1 nodes</small>")
+    class MEMORY_81C5D49B module;
+    AUTONOMOUS_FINANCIAL_RESEARCH_1A9F4B3D("Autonomous Financial Research<br/><small>1 nodes</small>")
+    class AUTONOMOUS_FINANCIAL_RESEARCH_1A9F4B3D module;
+    OTHER_D0941E68("Other<br/><small>3 nodes</small>")
+    class OTHER_D0941E68 module;
+    CLI_SKILLS_9964CBB8 -->|contains x30| TESTS_FIXTURES_B84B1DCC
+    TESTS_FIXTURES_B84B1DCC -->|imports x30| CLI_SKILLS_9964CBB8
+    BUILD_GRAPH_321CBB04 -->|imports x13| SERVE_API_35EC8E86
+    BUILD_GRAPH_321CBB04 -->|imports x10| CLI_SKILLS_9964CBB8
+    BUILD_GRAPH_321CBB04 -->|contains x10| TESTS_FIXTURES_B84B1DCC
+    INGEST_CACHE_UPDATE_FF457338 -->|imports x8| CLI_SKILLS_9964CBB8
+    LOGGING_CONFIG_CONFIGPY_C1FE2F1D -->|imports x7| CLI_SKILLS_9964CBB8
+    CLI_SKILLS_9964CBB8 -->|imports x6| LOGGING_CONFIG_CONFIGPY_C1FE2F1D
+    CLI_SKILLS_9964CBB8 -->|imports x5| BUILD_GRAPH_321CBB04
+    BUILD_GRAPH_321CBB04 -->|indirect call x5| CALCULATORPY_TOOLS_CALCULATE_F1AD47CB
+    BUILD_GRAPH_321CBB04 -->|indirect call x5| INGEST_CACHE_UPDATE_FF457338
+    SERVE_API_35EC8E86 -->|imports x5| CLI_SKILLS_9964CBB8
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<div class="grid">
+  <div class="card">
+    <h4>Architecture Layers</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>Layer</th><th>Nodes</th><th>Communities</th></tr>
+      <tr><td>Graph Build</td><td>14</td><td><code>17</code></td></tr><tr><td>Outputs &amp; Docs</td><td>7</td><td><code>20</code></td></tr><tr><td>CLI &amp; Skill Installers</td><td>153</td><td><code>0, 5, 9, 11, 13, 16, 24</code></td></tr><tr><td>Ingestion &amp; Updates</td><td>37</td><td><code>10, 15</code></td></tr><tr><td>Serving API</td><td>51</td><td><code>3, 18</code></td></tr><tr><td>Tests &amp; Fixtures</td><td>235</td><td><code>1, 2, 4, 6, 7, 8, 12, 23</code></td></tr><tr><td>Calculatorpy Tools Calculate</td><td>15</td><td><code>14</code></td></tr><tr><td>Logging Config Configpy</td><td>10</td><td><code>19</code></td></tr><tr><td>Company Profilepy Tools</td><td>6</td><td><code>21</code></td></tr><tr><td>Setuppy Setup Configuration</td><td>3</td><td><code>22</code></td></tr><tr><td>Evaluation</td><td>1</td><td><code>25</code></td></tr><tr><td>Llm</td><td>1</td><td><code>26</code></td></tr><tr><td>Memory</td><td>1</td><td><code>27</code></td></tr><tr><td>Autonomous Financial Research</td><td>1</td><td><code>28</code></td></tr><tr><td>Other</td><td>3</td><td><code>29, 30, 31</code></td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Core Flow</h4>
+    <div class="arrow-chain">Setuppy Setup Configuration -&gt; Graph Build -&gt; Serving API -&gt; CLI &amp; Skill Installers -&gt; Tests &amp; Fixtures -&gt; Logging Config Configpy -&gt; Outputs &amp; Docs</div>
+  </div>
+</div>
+<hr>
+<!-- ====== 2. Graph Build ====== -->
+<h2 id="build-graph">2. Graph Build</h2>
+<p>Graph Build groups implementation around tools, tool, peer, registrypy, mostly in tools/tool_registry.py, tools/peer_comparison.py, tools/fact_checker.py. This section covers 14 nodes and 17 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: Graph Build (14 nodes, 17 edges)
+    subgraph build_graph_tools_tool_registry_py_8ae0c7ab["tools/tool_registry.py"]
+        tools_tool_registry_6d486bd2("tool_registry.py")
+        tools_tool_registry_build_default_registry_5b5add13("build_default_registry()<br/><small>tools/tool_registry.py</small>")
+        tools_tool_registry_load_schema_d3c6f69c("load_schema()<br/><small>tools/tool_registry.py</small>")
+        tools_tool_registry_rationale_237_387e6895("Create a registry containing all availa...<br/><small>tools/tool_registry.py</small>")
+        tools_tool_registry_rationale_231_7163efef("Load a JSON schema from the schemas dir...<br/><small>tools/tool_registry.py</small>")
+        tools_tool_registry_rationale_2_eb61ccec("Registry for the financial research age...<br/><small>tools/tool_registry.py</small>")
+    end
+    subgraph build_graph_tools_peer_comparison_py_145ab6a8["tools/peer_comparison.py"]
+        tools_peer_comparison_compare_peers_4dcf94d2("compare_peers()<br/><small>tools/peer_comparison.py</small>")
+        tools_peer_comparison_ffa9e6eb("peer_comparison.py")
+        tools_peer_comparison_rationale_1_e246e429("Peer comparison tool for industry compe...<br/><small>tools/peer_comparison.py</small>")
+        tools_peer_comparison_rationale_23_88bea54e("Prepare a peer comparison matrix with r...<br/><small>tools/peer_comparison.py</small>")
+    end
+    subgraph build_graph_External_generated_653891f5["External / generated"]
+        tools_fact_checker_py_any_03c9762c("Any")
+        tools_peer_comparison_py_any_4081523e("Any")
+    end
+    subgraph build_graph_tools_fact_checker_py_3dfd88a8["tools/fact_checker.py"]
+        tools_fact_checker_check_claim_30faaf79("check_claim()<br/><small>tools/fact_checker.py</small>")
+        tools_fact_checker_rationale_11_86a63707("Cross-reference a specific claim agains...<br/><small>tools/fact_checker.py</small>")
+    end
+    tools_tool_registry_build_default_registry_5b5add13 -->|calls| tools_tool_registry_load_schema_d3c6f69c
+    tools_tool_registry_6d486bd2 -->|imports| tools_fact_checker_check_claim_30faaf79
+    tools_tool_registry_6d486bd2 -->|imports| tools_peer_comparison_compare_peers_4dcf94d2
+    tools_tool_registry_6d486bd2 -->|imports| tools_peer_comparison_ffa9e6eb
+    class tools_tool_registry_6d486bd2 module;
+    class tools_tool_registry_build_default_registry_5b5add13 function;
+    class tools_tool_registry_load_schema_d3c6f69c function;
+    class tools_tool_registry_rationale_237_387e6895 concept;
+    class tools_tool_registry_rationale_231_7163efef concept;
+    class tools_tool_registry_rationale_2_eb61ccec concept;
+    class tools_peer_comparison_compare_peers_4dcf94d2 function;
+    class tools_peer_comparison_ffa9e6eb module;
+    class tools_peer_comparison_rationale_1_e246e429 concept;
+    class tools_peer_comparison_rationale_23_88bea54e concept;
+    class tools_fact_checker_py_any_03c9762c klass;
+    class tools_peer_comparison_py_any_4081523e klass;
+    class tools_fact_checker_check_claim_30faaf79 function;
+    class tools_fact_checker_rationale_11_86a63707 concept;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>check_claim()</code><br><small style="color:var(--muted)">tools/fact_checker.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>build_default_registry()</code><br><small style="color:var(--muted)">tools/tool_registry.py</small><br><code>tool_registry.py</code><br><small style="color:var(--muted)">tools/tool_registry.py</small></td>
+  <td><code>re</code></td>
+  <td>check_claim() node in tools/fact_checker.py.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>compare_peers()</code><br><small style="color:var(--muted)">tools/peer_comparison.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>build_default_registry()</code><br><small style="color:var(--muted)">tools/tool_registry.py</small><br><code>tool_registry.py</code><br><small style="color:var(--muted)">tools/tool_registry.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>compare_peers() node in tools/peer_comparison.py.</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><code>build_default_registry()</code><br><small style="color:var(--muted)">tools/tool_registry.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>core.py</code><br><small style="color:var(--muted)">agent/core.py</small><br><code>create_agent()</code><br><small style="color:var(--muted)">agent/core.py</small><br><code>registry()</code><br><small style="color:var(--muted)">tests/test_tools.py</small><br>+1 more</td>
+  <td><code>analyze_news_sentiment()</code><br><small style="color:var(--muted)">tools/news_sentiment.py</small><br><code>calculate()</code><br><small style="color:var(--muted)">tools/calculator.py</small><br><code>calculation_engine()</code><br><small style="color:var(--muted)">tools/calculator.py</small><br>+14 more</td>
+  <td>build_default_registry() node in tools/tool_registry.py.</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><code>load_schema()</code><br><small style="color:var(--muted)">tools/tool_registry.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>build_default_registry()</code><br><small style="color:var(--muted)">tools/tool_registry.py</small></td>
+  <td><code>json</code></td>
+  <td>load_schema() node in tools/tool_registry.py.</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><code>Any</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Any node in project.</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td><code>peer_comparison.py</code><br><small style="color:var(--muted)">tools/peer_comparison.py</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td><code>tool_registry.py</code><br><small style="color:var(--muted)">tools/tool_registry.py</small></td>
+  <td><code>typing</code><br><code>yfinance</code></td>
+  <td>Module file in tools/peer_comparison.py.</td>
+</tr>
+<tr>
+  <td>7</td>
+  <td><code>Any</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Any node in project.</td>
+</tr>
+<tr>
+  <td>8</td>
+  <td><code>tool_registry.py</code><br><small style="color:var(--muted)">tools/tool_registry.py</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td><code>core.py</code><br><small style="color:var(--muted)">agent/core.py</small><br><code>test_agent.py</code><br><small style="color:var(--muted)">tests/test_agent.py</small><br><code>test_agent_core.py</code><br><small style="color:var(--muted)">tests/test_agent_core.py</small><br>+1 more</td>
+  <td><code>analyze_news_sentiment()</code><br><small style="color:var(--muted)">tools/news_sentiment.py</small><br><code>calculate()</code><br><small style="color:var(--muted)">tools/calculator.py</small><br><code>calculation_engine()</code><br><small style="color:var(--muted)">tools/calculator.py</small><br>+30 more</td>
+  <td>Module file in tools/tool_registry.py.</td>
+</tr>
+<tr>
+  <td>9</td>
+  <td><code>Cross-reference a specific claim against authoritative sources to verify…</code><br><small style="color:var(--muted)">tools/fact_checker.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Cross-reference a specific claim against authoritative sources to verify….</td>
+</tr>
+<tr>
+  <td>10</td>
+  <td><code>Peer comparison tool for industry competitive analysis.</code><br><small style="color:var(--muted)">tools/peer_comparison.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Peer comparison tool for industry competitive analysis..</td>
+</tr>
+<tr>
+  <td>11</td>
+  <td><code>Prepare a peer comparison matrix with rankings and comparative metrics.</code><br><small style="color:var(--muted)">tools/peer_comparison.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Prepare a peer comparison matrix with rankings and comparative metrics..</td>
+</tr>
+<tr>
+  <td>12</td>
+  <td><code>Registry for the financial research agent&#x27;s tools.</code><br><small style="color:var(--muted)">tools/tool_registry.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Registry for the financial research agent&#x27;s tools..</td>
+</tr>
+<tr>
+  <td>13</td>
+  <td><code>Load a JSON schema from the schemas directory.</code><br><small style="color:var(--muted)">tools/tool_registry.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Load a JSON schema from the schemas directory..</td>
+</tr>
+<tr>
+  <td>14</td>
+  <td><code>Create a registry containing all available research tools.</code><br><small style="color:var(--muted)">tools/tool_registry.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Create a registry containing all available research tools..</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>tools/tool_registry.py</code></td><td>6 nodes</td></tr>
+<tr><td><code>tools/peer_comparison.py</code></td><td>4 nodes</td></tr>
+<tr><td><code>tools/fact_checker.py</code></td><td>2 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: explains x6, contains x3, references x2, indirect call x2. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 3. Outputs & Docs ====== -->
+<h2 id="outputs-docs">3. Outputs &amp; Docs</h2>
+<p>Outputs &amp; Docs groups implementation around report, genpy, tools, structured, mostly in tools/report_gen.py. This section covers 7 nodes and 8 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: Outputs &amp; Docs (7 nodes, 8 edges)
+    subgraph outputs_docs_tools_report_gen_py_9753a6b2["tools/report_gen.py"]
+        tools_report_gen_generate_report_8fb9f59f("generate_report()<br/><small>tools/report_gen.py</small>")
+        tools_report_gen_format_investment_report_4be7e9fe("format_investment_report()<br/><small>tools/report_gen.py</small>")
+        tools_report_gen_9a7eb61b("report_gen.py")
+        tools_report_gen_rationale_12_567d142b("Format structured research data into a...<br/><small>tools/report_gen.py</small>")
+        tools_report_gen_rationale_63_264991b7("Generate a structured report from suppl...<br/><small>tools/report_gen.py</small>")
+        tools_report_gen_rationale_1_4625b459("Structured report generator for financi...<br/><small>tools/report_gen.py</small>")
+    end
+    tools_report_gen_py_any_384e5c28("Any")
+    tools_report_gen_generate_report_8fb9f59f -->|calls| tools_report_gen_format_investment_report_4be7e9fe
+    class tools_report_gen_generate_report_8fb9f59f function;
+    class tools_report_gen_format_investment_report_4be7e9fe function;
+    class tools_report_gen_9a7eb61b module;
+    class tools_report_gen_rationale_12_567d142b concept;
+    class tools_report_gen_rationale_63_264991b7 concept;
+    class tools_report_gen_rationale_1_4625b459 concept;
+    class tools_report_gen_py_any_384e5c28 klass;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>format_investment_report()</code><br><small style="color:var(--muted)">tools/report_gen.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>generate_report()</code><br><small style="color:var(--muted)">tools/report_gen.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>format_investment_report() node in tools/report_gen.py.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>generate_report()</code><br><small style="color:var(--muted)">tools/report_gen.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>build_default_registry()</code><br><small style="color:var(--muted)">tools/tool_registry.py</small><br><code>tool_registry.py</code><br><small style="color:var(--muted)">tools/tool_registry.py</small></td>
+  <td><code>format_investment_report()</code><br><small style="color:var(--muted)">tools/report_gen.py</small></td>
+  <td>generate_report() node in tools/report_gen.py.</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><code>report_gen.py</code><br><small style="color:var(--muted)">tools/report_gen.py</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td><code>tool_registry.py</code><br><small style="color:var(--muted)">tools/tool_registry.py</small></td>
+  <td><code>datetime</code><br><code>typing</code></td>
+  <td>Module file in tools/report_gen.py.</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><code>Any</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Any node in project.</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><code>Structured report generator for financial research reports adhering to standard…</code><br><small style="color:var(--muted)">tools/report_gen.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Structured report generator for financial research reports adhering to standard….</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td><code>Format structured research data into a complete markdown report.</code><br><small style="color:var(--muted)">tools/report_gen.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Format structured research data into a complete markdown report..</td>
+</tr>
+<tr>
+  <td>7</td>
+  <td><code>Generate a structured report from supplied research findings or section dict.</code><br><small style="color:var(--muted)">tools/report_gen.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Generate a structured report from supplied research findings or section dict..</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>tools/report_gen.py</code></td><td>6 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: explains x3, references x2, contains x2, calls x1. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 4. CLI & Skill Installers ====== -->
+<h2 id="cli-skills">4. CLI &amp; Skill Installers</h2>
+<p>CLI &amp; Skill Installers groups implementation around agent, error, circuit, handlerpy, mostly in agent/error_handler.py, agent/circuit_breaker.py, agent/fallback_chains.py. This section covers 153 nodes and 265 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: CLI &amp; Skill Installers (153 nodes, 265 edges)
+    subgraph cli_skills_agent_circuit_breaker_py_645b8925["agent/circuit_breaker.py"]
+        agent_circuit_breaker_circuitbreakerregistry_1e5e5393("CircuitBreakerRegistry<br/><small>agent/circuit_breaker.py</small>")
+        agent_circuit_breaker_circuitbreakerregistry_ini_aa1fc422("__init__()<br/><small>agent/circuit_breaker.py</small>")
+        agent_circuit_breaker_circuitbreakerregistry_get_bdb8e1e5("get_breaker()<br/><small>agent/circuit_breaker.py</small>")
+        agent_circuit_breaker_circuitbreakerregistry_is_d7584cc2("is_available()<br/><small>agent/circuit_breaker.py</small>")
+        agent_circuit_breaker_toolcircuitbreaker_830b7945("ToolCircuitBreaker<br/><small>agent/circuit_breaker.py</small>")
+        agent_circuit_breaker_toolcircuitbreaker_init_0cc23e49("__init__()<br/><small>agent/circuit_breaker.py</small>")
+        agent_circuit_breaker_toolcircuitbreaker_call_a709b657("call()<br/><small>agent/circuit_breaker.py</small>")
+        agent_circuit_breaker_toolcircuitbreaker_handle_e55ea970("_handle_success()<br/><small>agent/circuit_breaker.py</small>")
+        agent_circuit_breaker_toolcircuitbreaker_handle_e4970f0d("_handle_failure()<br/><small>agent/circuit_breaker.py</small>")
+    end
+    subgraph cli_skills_agent_disambiguation_py_b45263e2["agent/disambiguation.py"]
+        agent_disambiguation_ea61427f("disambiguation.py")
+        agent_disambiguation_querydisambiguator_e5dd032b("QueryDisambiguator<br/><small>agent/disambiguation.py</small>")
+        agent_disambiguation_querydisambiguator_disambig_fa8baa63("disambiguate()<br/><small>agent/disambiguation.py</small>")
+    end
+    agent_query_analyzer_queryanalyzer_ca0526a0("QueryAnalyzer<br/><small>agent/query_analyzer.py</small>")
+    main_b28b7af6("main.py")
+    memory_episodic_3f926e4b("episodic.py")
+    memory_vector_store_09bd605b("vector_store.py")
+    scripts_run_challenge3_687aeda8("run_challenge3.py")
+    tests_test_agent_55d822e0("test_agent.py")
+    agent_circuit_breaker_circuitbreakerregistry_1e5e5393 -->|method| agent_circuit_breaker_circuitbreakerregistry_ini_aa1fc422
+    agent_circuit_breaker_circuitbreakerregistry_1e5e5393 -->|method| agent_circuit_breaker_circuitbreakerregistry_get_bdb8e1e5
+    agent_circuit_breaker_circuitbreakerregistry_1e5e5393 -->|method| agent_circuit_breaker_circuitbreakerregistry_is_d7584cc2
+    agent_circuit_breaker_toolcircuitbreaker_830b7945 -->|method| agent_circuit_breaker_toolcircuitbreaker_init_0cc23e49
+    agent_circuit_breaker_toolcircuitbreaker_830b7945 -->|method| agent_circuit_breaker_toolcircuitbreaker_call_a709b657
+    agent_circuit_breaker_toolcircuitbreaker_830b7945 -->|method| agent_circuit_breaker_toolcircuitbreaker_handle_e55ea970
+    agent_circuit_breaker_toolcircuitbreaker_830b7945 -->|method| agent_circuit_breaker_toolcircuitbreaker_handle_e4970f0d
+    agent_disambiguation_querydisambiguator_e5dd032b -->|method| agent_disambiguation_querydisambiguator_disambig_fa8baa63
+    agent_circuit_breaker_circuitbreakerregistry_get_bdb8e1e5 -->|calls| agent_circuit_breaker_toolcircuitbreaker_830b7945
+    agent_circuit_breaker_circuitbreakerregistry_is_d7584cc2 -->|calls| agent_circuit_breaker_circuitbreakerregistry_get_bdb8e1e5
+    agent_circuit_breaker_toolcircuitbreaker_call_a709b657 -->|calls| agent_circuit_breaker_toolcircuitbreaker_handle_e55ea970
+    agent_circuit_breaker_toolcircuitbreaker_call_a709b657 -->|calls| agent_circuit_breaker_toolcircuitbreaker_handle_e4970f0d
+    tests_test_agent_55d822e0 -->|imports| agent_query_analyzer_queryanalyzer_ca0526a0
+    tests_test_agent_55d822e0 -->|imports| agent_disambiguation_querydisambiguator_e5dd032b
+    tests_test_agent_55d822e0 -->|imports| agent_circuit_breaker_toolcircuitbreaker_830b7945
+    tests_test_agent_55d822e0 -->|imports| agent_disambiguation_ea61427f
+    %% Omitted for readability: 135 nodes, 0 edges
+    class agent_circuit_breaker_circuitbreakerregistry_1e5e5393 klass;
+    class agent_circuit_breaker_circuitbreakerregistry_ini_aa1fc422 function;
+    class agent_circuit_breaker_circuitbreakerregistry_get_bdb8e1e5 function;
+    class agent_circuit_breaker_circuitbreakerregistry_is_d7584cc2 function;
+    class agent_circuit_breaker_toolcircuitbreaker_830b7945 klass;
+    class agent_circuit_breaker_toolcircuitbreaker_init_0cc23e49 function;
+    class agent_circuit_breaker_toolcircuitbreaker_call_a709b657 function;
+    class agent_circuit_breaker_toolcircuitbreaker_handle_e55ea970 function;
+    class agent_circuit_breaker_toolcircuitbreaker_handle_e4970f0d function;
+    class agent_disambiguation_ea61427f module;
+    class agent_disambiguation_querydisambiguator_e5dd032b klass;
+    class agent_disambiguation_querydisambiguator_disambig_fa8baa63 function;
+    class agent_query_analyzer_queryanalyzer_ca0526a0 klass;
+    class main_b28b7af6 module;
+    class memory_episodic_3f926e4b module;
+    class memory_vector_store_09bd605b ui;
+    class scripts_run_challenge3_687aeda8 module;
+    class tests_test_agent_55d822e0 test;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>CircuitBreakerOpenError</code><br><small style="color:var(--muted)">agent/circuit_breaker.py</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td><code>call()</code><br><small style="color:var(--muted)">agent/circuit_breaker.py</small><br><code>circuit breaker transitions()</code><br><small style="color:var(--muted)">tests/test_agent.py</small><br><code>test_agent.py</code><br><small style="color:var(--muted)">tests/test_agent.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>CircuitBreakerOpenError node in agent/circuit_breaker.py.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>CircuitBreakerRegistry</code><br><small style="color:var(--muted)">agent/circuit_breaker.py</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>__init__()</code><br><small style="color:var(--muted)">agent/circuit_breaker.py</small><br><code>get_breaker()</code><br><small style="color:var(--muted)">agent/circuit_breaker.py</small><br><code>is_available()</code><br><small style="color:var(--muted)">agent/circuit_breaker.py</small></td>
+  <td>CircuitBreakerRegistry node in agent/circuit_breaker.py.</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><code>CircuitState</code><br><small style="color:var(--muted)">agent/circuit_breaker.py</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td><code>circuit breaker transitions()</code><br><small style="color:var(--muted)">tests/test_agent.py</small><br><code>test_agent.py</code><br><small style="color:var(--muted)">tests/test_agent.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>CircuitState node in agent/circuit_breaker.py.</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><code>ToolCircuitBreaker</code><br><small style="color:var(--muted)">agent/circuit_breaker.py</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td><code>circuit breaker transitions()</code><br><small style="color:var(--muted)">tests/test_agent.py</small><br><code>get_breaker()</code><br><small style="color:var(--muted)">agent/circuit_breaker.py</small><br><code>test_agent.py</code><br><small style="color:var(--muted)">tests/test_agent.py</small></td>
+  <td><code>__init__()</code><br><small style="color:var(--muted)">agent/circuit_breaker.py</small><br><code>_handle_failure()</code><br><small style="color:var(--muted)">agent/circuit_breaker.py</small><br><code>_handle_success()</code><br><small style="color:var(--muted)">agent/circuit_breaker.py</small><br>+1 more</td>
+  <td>ToolCircuitBreaker node in agent/circuit_breaker.py.</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><code>DisambiguationResult</code><br><small style="color:var(--muted)">agent/disambiguation.py</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td><code>disambiguate()</code><br><small style="color:var(--muted)">agent/disambiguation.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>DisambiguationResult node in agent/disambiguation.py.</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td><code>QueryDisambiguator</code><br><small style="color:var(--muted)">agent/disambiguation.py</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td><code>analyzer and disambiguation()</code><br><small style="color:var(--muted)">tests/test_agent.py</small><br><code>test_agent.py</code><br><small style="color:var(--muted)">tests/test_agent.py</small></td>
+  <td><code>disambiguate()</code><br><small style="color:var(--muted)">agent/disambiguation.py</small><br><code>QueryAnalysis</code><br><small style="color:var(--muted)">agent/query_analyzer.py</small></td>
+  <td>QueryDisambiguator node in agent/disambiguation.py.</td>
+</tr>
+<tr>
+  <td>7</td>
+  <td><code>QueryAnalysis</code><br><small style="color:var(--muted)">agent/query_analyzer.py</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td><code>analyze()</code><br><small style="color:var(--muted)">agent/query_analyzer.py</small><br><code>disambiguation.py</code><br><small style="color:var(--muted)">agent/disambiguation.py</small><br><code>QueryDisambiguator</code><br><small style="color:var(--muted)">agent/disambiguation.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>Orchestrates analysis and returns structured documentation data.</td>
+</tr>
+<tr>
+  <td>8</td>
+  <td><code>QueryAnalyzer</code><br><small style="color:var(--muted)">agent/query_analyzer.py</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td><code>analyzer and disambiguation()</code><br><small style="color:var(--muted)">tests/test_agent.py</small><br><code>test_agent.py</code><br><small style="color:var(--muted)">tests/test_agent.py</small></td>
+  <td><code>analyze()</code><br><small style="color:var(--muted)">agent/query_analyzer.py</small></td>
+  <td>Orchestrates analysis and returns structured documentation data.</td>
+</tr>
+<tr>
+  <td>9</td>
+  <td><code>QueryType</code><br><small style="color:var(--muted)">agent/query_analyzer.py</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td><code>analyzer and disambiguation()</code><br><small style="color:var(--muted)">tests/test_agent.py</small><br><code>disambiguation.py</code><br><small style="color:var(--muted)">agent/disambiguation.py</small><br><code>test_agent.py</code><br><small style="color:var(--muted)">tests/test_agent.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>QueryType node in agent/query_analyzer.py.</td>
+</tr>
+<tr>
+  <td>10</td>
+  <td><code>.get_breaker()</code><br><small style="color:var(--muted)">agent/circuit_breaker.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>CircuitBreakerRegistry</code><br><small style="color:var(--muted)">agent/circuit_breaker.py</small><br><code>is_available()</code><br><small style="color:var(--muted)">agent/circuit_breaker.py</small></td>
+  <td><code>ToolCircuitBreaker</code><br><small style="color:var(--muted)">agent/circuit_breaker.py</small></td>
+  <td>.get_breaker() node in agent/circuit_breaker.py.</td>
+</tr>
+<tr>
+  <td>11</td>
+  <td><code>.__init__()</code><br><small style="color:var(--muted)">agent/circuit_breaker.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>CircuitBreakerRegistry</code><br><small style="color:var(--muted)">agent/circuit_breaker.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>.__init__() node in agent/circuit_breaker.py.</td>
+</tr>
+<tr>
+  <td>12</td>
+  <td><code>.is_available()</code><br><small style="color:var(--muted)">agent/circuit_breaker.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>CircuitBreakerRegistry</code><br><small style="color:var(--muted)">agent/circuit_breaker.py</small></td>
+  <td><code>get_breaker()</code><br><small style="color:var(--muted)">agent/circuit_breaker.py</small></td>
+  <td>.is_available() node in agent/circuit_breaker.py.</td>
+</tr>
+<tr>
+  <td>13</td>
+  <td><code>.call()</code><br><small style="color:var(--muted)">agent/circuit_breaker.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>circuit breaker transitions()</code><br><small style="color:var(--muted)">tests/test_agent.py</small><br><code>ToolCircuitBreaker</code><br><small style="color:var(--muted)">agent/circuit_breaker.py</small></td>
+  <td><code>_handle_failure()</code><br><small style="color:var(--muted)">agent/circuit_breaker.py</small><br><code>_handle_success()</code><br><small style="color:var(--muted)">agent/circuit_breaker.py</small><br><code>CircuitBreakerOpenError</code><br><small style="color:var(--muted)">agent/circuit_breaker.py</small></td>
+  <td>.call() node in agent/circuit_breaker.py.</td>
+</tr>
+<tr>
+  <td>14</td>
+  <td><code>._handle_failure()</code><br><small style="color:var(--muted)">agent/circuit_breaker.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>call()</code><br><small style="color:var(--muted)">agent/circuit_breaker.py</small><br><code>ToolCircuitBreaker</code><br><small style="color:var(--muted)">agent/circuit_breaker.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>._handle_failure() node in agent/circuit_breaker.py.</td>
+</tr>
+<tr>
+  <td>15</td>
+  <td><code>._handle_success()</code><br><small style="color:var(--muted)">agent/circuit_breaker.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>call()</code><br><small style="color:var(--muted)">agent/circuit_breaker.py</small><br><code>ToolCircuitBreaker</code><br><small style="color:var(--muted)">agent/circuit_breaker.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>._handle_success() node in agent/circuit_breaker.py.</td>
+</tr>
+<tr>
+  <td>16</td>
+  <td><code>.__init__()</code><br><small style="color:var(--muted)">agent/circuit_breaker.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>ToolCircuitBreaker</code><br><small style="color:var(--muted)">agent/circuit_breaker.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>.__init__() node in agent/circuit_breaker.py.</td>
+</tr>
+<tr>
+  <td>17</td>
+  <td><code>.disambiguate()</code><br><small style="color:var(--muted)">agent/disambiguation.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>analyzer and disambiguation()</code><br><small style="color:var(--muted)">tests/test_agent.py</small><br><code>QueryDisambiguator</code><br><small style="color:var(--muted)">agent/disambiguation.py</small></td>
+  <td><code>DisambiguationResult</code><br><small style="color:var(--muted)">agent/disambiguation.py</small></td>
+  <td>.disambiguate() node in agent/disambiguation.py.</td>
+</tr>
+<tr>
+  <td>18</td>
+  <td><code>.analyze()</code><br><small style="color:var(--muted)">agent/query_analyzer.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>analyzer and disambiguation()</code><br><small style="color:var(--muted)">tests/test_agent.py</small><br><code>QueryAnalyzer</code><br><small style="color:var(--muted)">agent/query_analyzer.py</small></td>
+  <td><code>QueryAnalysis</code><br><small style="color:var(--muted)">agent/query_analyzer.py</small></td>
+  <td>Orchestrates analysis and returns structured documentation data.</td>
+</tr>
+<tr>
+  <td>19</td>
+  <td><code>test_circuit_breaker_transitions()</code><br><small style="color:var(--muted)">tests/test_agent.py</small></td>
+  <td><span class="tag tag-func">Test</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>call()</code><br><small style="color:var(--muted)">agent/circuit_breaker.py</small><br><code>CircuitBreakerOpenError</code><br><small style="color:var(--muted)">agent/circuit_breaker.py</small><br><code>CircuitState</code><br><small style="color:var(--muted)">agent/circuit_breaker.py</small><br>+2 more</td>
+  <td>Verifies imports, entry points, or version behavior.</td>
+</tr>
+<tr>
+  <td>20</td>
+  <td><code>failing_call()</code><br><small style="color:var(--muted)">tests/test_agent.py</small></td>
+  <td><span class="tag tag-func">Test</span></td>
+  <td><code>circuit breaker transitions()</code><br><small style="color:var(--muted)">tests/test_agent.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>failing_call() node in tests/test_agent.py.</td>
+</tr>
+<tr>
+  <td>21</td>
+  <td><code>test_query_analyzer_and_disambiguation()</code><br><small style="color:var(--muted)">tests/test_agent.py</small></td>
+  <td><span class="tag tag-func">Test</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>analyze()</code><br><small style="color:var(--muted)">agent/query_analyzer.py</small><br><code>disambiguate()</code><br><small style="color:var(--muted)">agent/disambiguation.py</small><br><code>QueryAnalyzer</code><br><small style="color:var(--muted)">agent/query_analyzer.py</small><br>+2 more</td>
+  <td>Orchestrates analysis and returns structured documentation data.</td>
+</tr>
+<tr>
+  <td>22</td>
+  <td><code>circuit_breaker.py</code><br><small style="color:var(--muted)">agent/circuit_breaker.py</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td><code>test_agent.py</code><br><small style="color:var(--muted)">tests/test_agent.py</small></td>
+  <td><code>Enum</code><br><code>logging</code><br><code>time</code><br>+1 more</td>
+  <td>Module file in agent/circuit_breaker.py.</td>
+</tr>
+<tr>
+  <td>23</td>
+  <td><code>Any</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Any node in project.</td>
+</tr>
+<tr>
+  <td>24</td>
+  <td><code>Enum</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td><code>circuit_breaker.py</code><br><small style="color:var(--muted)">agent/circuit_breaker.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>Enum node in project.</td>
+</tr>
+<tr>
+  <td>25</td>
+  <td><code>Exception</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Exception node in project.</td>
+</tr>
+<tr>
+  <td>26</td>
+  <td><code>str</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>str node in project.</td>
+</tr>
+<tr>
+  <td>27</td>
+  <td><code>disambiguation.py</code><br><small style="color:var(--muted)">agent/disambiguation.py</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td><code>test_agent.py</code><br><small style="color:var(--muted)">tests/test_agent.py</small></td>
+  <td><code>dataclasses</code><br><code>logging</code><br><code>query_analyzer.py</code><br><small style="color:var(--muted)">agent/query_analyzer.py</small><br>+3 more</td>
+  <td>Module file in agent/disambiguation.py.</td>
+</tr>
+<tr>
+  <td>28</td>
+  <td><code>query_analyzer.py</code><br><small style="color:var(--muted)">agent/query_analyzer.py</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td><code>disambiguation.py</code><br><small style="color:var(--muted)">agent/disambiguation.py</small><br><code>test_agent.py</code><br><small style="color:var(--muted)">tests/test_agent.py</small></td>
+  <td><code>dataclasses</code><br><code>Enum</code><br><code>re</code><br>+1 more</td>
+  <td>Module file in agent/query_analyzer.py.</td>
+</tr>
+<tr>
+  <td>29</td>
+  <td><code>Enum</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td><code>query_analyzer.py</code><br><small style="color:var(--muted)">agent/query_analyzer.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>Enum node in project.</td>
+</tr>
+<tr>
+  <td>30</td>
+  <td><code>str</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>str node in project.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>agent/error_handler.py</code></td><td>23 nodes</td></tr>
+<tr><td><code>agent/circuit_breaker.py</code></td><td>20 nodes</td></tr>
+<tr><td><code>agent/fallback_chains.py</code></td><td>13 nodes</td></tr>
+<tr><td><code>main.py</code></td><td>11 nodes</td></tr>
+<tr><td><code>agent/query_analyzer.py</code></td><td>10 nodes</td></tr>
+<tr><td><code>tests/test_agent.py</code></td><td>9 nodes</td></tr>
+<tr><td><code>agent/disambiguation.py</code></td><td>8 nodes</td></tr>
+<tr><td><code>agent/core.py</code></td><td>4 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: explains x53, imports x46, imports x44, calls x38. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 5. Ingestion & Updates ====== -->
+<h2 id="ingest-cache-update">5. Ingestion &amp; Updates</h2>
+<p>Ingestion &amp; Updates groups implementation around evaluation, metricspy, earningspy, tools, mostly in evaluation/metrics.py, tools/earnings.py, evaluation/dashboard.py. This section covers 37 nodes and 50 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: Ingestion &amp; Updates (37 nodes, 50 edges)
+    subgraph ingest_cache_update_evaluation_metrics_py_c782cc03["evaluation/metrics.py"]
+        evaluation_metrics_evaluationframework_4f9f95d9("EvaluationFramework<br/><small>evaluation/metrics.py</small>")
+        evaluation_metrics_evaluationframework_evaluate_53c16f8a("evaluate_report_text()<br/><small>evaluation/metrics.py</small>")
+        evaluation_metrics_evaluationframework_calculate_94919357("calculate_tool_efficiency()<br/><small>evaluation/metrics.py</small>")
+        evaluation_metrics_evaluationframework_calculate_8dff3834("calculate_error_recovery_rate()<br/><small>evaluation/metrics.py</small>")
+        evaluation_metrics_evaluationframework_calculate_3b70a921("calculate_memory_utilization()<br/><small>evaluation/metrics.py</small>")
+        evaluation_metrics_qualitymetricsreport_4c69aa60("QualityMetricsReport<br/><small>evaluation/metrics.py</small>")
+        evaluation_metrics_qualitymetricsreport_compute_f654dabd("compute_composite_rqb_score()<br/><small>evaluation/metrics.py</small>")
+        evaluation_metrics_0b2a84c0("metrics.py")
+    end
+    subgraph ingest_cache_update_tools_earnings_py_efd74dc7["tools/earnings.py"]
+        tools_earnings_99dbf76f("earnings.py")
+        tools_earnings_fetch_earnings_find_value_c111b812("find_value()<br/><small>tools/earnings.py</small>")
+        tools_earnings_fetch_earnings_12b253ee("_fetch_earnings()<br/><small>tools/earnings.py</small>")
+        tools_earnings_wait_for_rate_limit_4a234fc7("_wait_for_rate_limit()<br/><small>tools/earnings.py</small>")
+        tools_earnings_number_or_none_4900d28f("_number_or_none()<br/><small>tools/earnings.py</small>")
+        tools_earnings_get_earnings_4f20bca9("get_earnings()<br/><small>tools/earnings.py</small>")
+    end
+    subgraph ingest_cache_update_External_generated_9d67cab5["External / generated"]
+        pandas_add564b5("pandas")
+        evaluation_dashboard_py_any_2e803417("Any")
+    end
+    subgraph ingest_cache_update_evaluation_dashboard_py_38272888["evaluation/dashboard.py"]
+        evaluation_dashboard_aed92240("dashboard.py")
+        evaluation_dashboard_generate_evaluation_summary_3596c197("generate evaluation summary()<br/><small>evaluation/dashboard.py</small>")
+    end
+    evaluation_metrics_evaluationframework_4f9f95d9 -->|method| evaluation_metrics_evaluationframework_calculate_94919357
+    evaluation_metrics_evaluationframework_4f9f95d9 -->|method| evaluation_metrics_evaluationframework_calculate_8dff3834
+    evaluation_metrics_evaluationframework_4f9f95d9 -->|method| evaluation_metrics_evaluationframework_evaluate_53c16f8a
+    evaluation_metrics_evaluationframework_4f9f95d9 -->|method| evaluation_metrics_evaluationframework_calculate_3b70a921
+    evaluation_metrics_qualitymetricsreport_4c69aa60 -->|method| evaluation_metrics_qualitymetricsreport_compute_f654dabd
+    evaluation_dashboard_generate_evaluation_summary_3596c197 -->|calls| evaluation_metrics_evaluationframework_4f9f95d9
+    evaluation_metrics_evaluationframework_evaluate_53c16f8a -->|calls| evaluation_metrics_evaluationframework_calculate_94919357
+    evaluation_metrics_evaluationframework_evaluate_53c16f8a -->|calls| evaluation_metrics_evaluationframework_calculate_3b70a921
+    evaluation_metrics_evaluationframework_evaluate_53c16f8a -->|calls| evaluation_metrics_qualitymetricsreport_4c69aa60
+    tools_earnings_fetch_earnings_12b253ee -->|calls| tools_earnings_wait_for_rate_limit_4a234fc7
+    tools_earnings_fetch_earnings_find_value_c111b812 -->|calls| tools_earnings_number_or_none_4900d28f
+    tools_earnings_get_earnings_4f20bca9 -->|calls| tools_earnings_fetch_earnings_12b253ee
+    evaluation_dashboard_aed92240 -->|imports| evaluation_metrics_evaluationframework_4f9f95d9
+    evaluation_dashboard_aed92240 -->|imports| evaluation_metrics_qualitymetricsreport_4c69aa60
+    evaluation_dashboard_aed92240 -->|imports| evaluation_metrics_0b2a84c0
+    tools_earnings_99dbf76f -->|imports| pandas_add564b5
+    evaluation_dashboard_generate_evaluation_summary_3596c197 -->|uses| evaluation_metrics_qualitymetricsreport_4c69aa60
+    evaluation_dashboard_generate_evaluation_summary_3596c197 -->|calls| evaluation_metrics_evaluationframework_evaluate_53c16f8a
+    evaluation_metrics_evaluationframework_evaluate_53c16f8a -->|calls| evaluation_metrics_qualitymetricsreport_compute_f654dabd
+    %% Omitted for readability: 19 nodes, 0 edges
+    class evaluation_metrics_evaluationframework_4f9f95d9 klass;
+    class evaluation_metrics_evaluationframework_evaluate_53c16f8a function;
+    class evaluation_metrics_evaluationframework_calculate_94919357 function;
+    class evaluation_metrics_evaluationframework_calculate_8dff3834 function;
+    class evaluation_metrics_evaluationframework_calculate_3b70a921 function;
+    class evaluation_metrics_qualitymetricsreport_4c69aa60 klass;
+    class evaluation_metrics_qualitymetricsreport_compute_f654dabd function;
+    class evaluation_metrics_0b2a84c0 module;
+    class tools_earnings_99dbf76f module;
+    class tools_earnings_fetch_earnings_find_value_c111b812 function;
+    class tools_earnings_fetch_earnings_12b253ee function;
+    class tools_earnings_wait_for_rate_limit_4a234fc7 function;
+    class tools_earnings_number_or_none_4900d28f function;
+    class tools_earnings_get_earnings_4f20bca9 function;
+    class pandas_add564b5 function;
+    class evaluation_dashboard_py_any_2e803417 klass;
+    class evaluation_dashboard_aed92240 module;
+    class evaluation_dashboard_generate_evaluation_summary_3596c197 function;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>EvaluationFramework</code><br><small style="color:var(--muted)">evaluation/metrics.py</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td><code>dashboard.py</code><br><small style="color:var(--muted)">evaluation/dashboard.py</small><br><code>generate evaluation summary()</code><br><small style="color:var(--muted)">evaluation/dashboard.py</small></td>
+  <td><code>calculate_error_recovery_rate()</code><br><small style="color:var(--muted)">evaluation/metrics.py</small><br><code>calculate_memory_utilization()</code><br><small style="color:var(--muted)">evaluation/metrics.py</small><br><code>calculate_tool_efficiency()</code><br><small style="color:var(--muted)">evaluation/metrics.py</small><br>+1 more</td>
+  <td>EvaluationFramework node in evaluation/metrics.py.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>QualityMetricsReport</code><br><small style="color:var(--muted)">evaluation/metrics.py</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td><code>dashboard.py</code><br><small style="color:var(--muted)">evaluation/dashboard.py</small><br><code>evaluate_report_text()</code><br><small style="color:var(--muted)">evaluation/metrics.py</small><br><code>generate evaluation summary()</code><br><small style="color:var(--muted)">evaluation/dashboard.py</small></td>
+  <td><code>compute_composite_rqb_score()</code><br><small style="color:var(--muted)">evaluation/metrics.py</small></td>
+  <td>QualityMetricsReport node in evaluation/metrics.py.</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><code>generate_evaluation_summary()</code><br><small style="color:var(--muted)">evaluation/dashboard.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>main.py</code><br><small style="color:var(--muted)">main.py</small><br><code>run_eval()</code><br><small style="color:var(--muted)">main.py</small></td>
+  <td><code>evaluate_report_text()</code><br><small style="color:var(--muted)">evaluation/metrics.py</small><br><code>EvaluationFramework</code><br><small style="color:var(--muted)">evaluation/metrics.py</small><br><code>QualityMetricsReport</code><br><small style="color:var(--muted)">evaluation/metrics.py</small></td>
+  <td>generate_evaluation_summary() node in evaluation/dashboard.py.</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><code>.calculate_error_recovery_rate()</code><br><small style="color:var(--muted)">evaluation/metrics.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>EvaluationFramework</code><br><small style="color:var(--muted)">evaluation/metrics.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>.calculate_error_recovery_rate() node in evaluation/metrics.py.</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><code>.calculate_memory_utilization()</code><br><small style="color:var(--muted)">evaluation/metrics.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>evaluate_report_text()</code><br><small style="color:var(--muted)">evaluation/metrics.py</small><br><code>EvaluationFramework</code><br><small style="color:var(--muted)">evaluation/metrics.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>.calculate_memory_utilization() node in evaluation/metrics.py.</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td><code>.calculate_tool_efficiency()</code><br><small style="color:var(--muted)">evaluation/metrics.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>evaluate_report_text()</code><br><small style="color:var(--muted)">evaluation/metrics.py</small><br><code>EvaluationFramework</code><br><small style="color:var(--muted)">evaluation/metrics.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>.calculate_tool_efficiency() node in evaluation/metrics.py.</td>
+</tr>
+<tr>
+  <td>7</td>
+  <td><code>.evaluate_report_text()</code><br><small style="color:var(--muted)">evaluation/metrics.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>EvaluationFramework</code><br><small style="color:var(--muted)">evaluation/metrics.py</small><br><code>generate evaluation summary()</code><br><small style="color:var(--muted)">evaluation/dashboard.py</small></td>
+  <td><code>calculate_memory_utilization()</code><br><small style="color:var(--muted)">evaluation/metrics.py</small><br><code>calculate_tool_efficiency()</code><br><small style="color:var(--muted)">evaluation/metrics.py</small><br><code>compute_composite_rqb_score()</code><br><small style="color:var(--muted)">evaluation/metrics.py</small><br>+1 more</td>
+  <td>.evaluate_report_text() node in evaluation/metrics.py.</td>
+</tr>
+<tr>
+  <td>8</td>
+  <td><code>.compute_composite_rqb_score()</code><br><small style="color:var(--muted)">evaluation/metrics.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>evaluate_report_text()</code><br><small style="color:var(--muted)">evaluation/metrics.py</small><br><code>QualityMetricsReport</code><br><small style="color:var(--muted)">evaluation/metrics.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>.compute_composite_rqb_score() node in evaluation/metrics.py.</td>
+</tr>
+<tr>
+  <td>9</td>
+  <td><code>dashboard.py</code><br><small style="color:var(--muted)">evaluation/dashboard.py</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td><code>main.py</code><br><small style="color:var(--muted)">main.py</small></td>
+  <td><code>EvaluationFramework</code><br><small style="color:var(--muted)">evaluation/metrics.py</small><br><code>json</code><br><code>metrics.py</code><br><small style="color:var(--muted)">evaluation/metrics.py</small><br>+3 more</td>
+  <td>Module file in evaluation/dashboard.py.</td>
+</tr>
+<tr>
+  <td>10</td>
+  <td><code>Any</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Any node in project.</td>
+</tr>
+<tr>
+  <td>11</td>
+  <td><code>metrics.py</code><br><small style="color:var(--muted)">evaluation/metrics.py</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td><code>dashboard.py</code><br><small style="color:var(--muted)">evaluation/dashboard.py</small></td>
+  <td><code>dataclasses</code><br><code>logging</code><br><code>re</code><br>+1 more</td>
+  <td>Module file in evaluation/metrics.py.</td>
+</tr>
+<tr>
+  <td>12</td>
+  <td><code>Any</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Any node in project.</td>
+</tr>
+<tr>
+  <td>13</td>
+  <td><code>Evaluation dashboard generator producing Markdown and HTML visual reports…</code><br><small style="color:var(--muted)">evaluation/dashboard.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Evaluation dashboard generator producing Markdown and HTML visual reports….</td>
+</tr>
+<tr>
+  <td>14</td>
+  <td><code>Evaluate all 8 challenges and generate markdown and HTML scorecards.</code><br><small style="color:var(--muted)">evaluation/dashboard.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Evaluate all 8 challenges and generate markdown and HTML scorecards..</td>
+</tr>
+<tr>
+  <td>15</td>
+  <td><code>Comprehensive evaluation framework implementing 22 quality metrics and Research…</code><br><small style="color:var(--muted)">evaluation/metrics.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Comprehensive evaluation framework implementing 22 quality metrics and Research….</td>
+</tr>
+<tr>
+  <td>16</td>
+  <td><code>Calculate AB-1 Tool Efficiency (useful / total).</code><br><small style="color:var(--muted)">evaluation/metrics.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Calculate AB-1 Tool Efficiency (useful / total)..</td>
+</tr>
+<tr>
+  <td>17</td>
+  <td><code>Calculate AB-2 Error Recovery Rate.</code><br><small style="color:var(--muted)">evaluation/metrics.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Calculate AB-2 Error Recovery Rate..</td>
+</tr>
+<tr>
+  <td>18</td>
+  <td><code>Analyze markdown report text and tool logs to compute all 22 metrics.</code><br><small style="color:var(--muted)">evaluation/metrics.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Analyze markdown report text and tool logs to compute all 22 metrics..</td>
+</tr>
+<tr>
+  <td>19</td>
+  <td><code>Consolidated scorecard across all 5 evaluation dimensions.</code><br><small style="color:var(--muted)">evaluation/metrics.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Consolidated scorecard across all 5 evaluation dimensions..</td>
+</tr>
+<tr>
+  <td>20</td>
+  <td><code>Compute the weighted composite Research Quality Board score.</code><br><small style="color:var(--muted)">evaluation/metrics.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Compute the weighted composite Research Quality Board score..</td>
+</tr>
+<tr>
+  <td>21</td>
+  <td><code>Calculates all 22 quality metrics across agent outputs and benchmarks.</code><br><small style="color:var(--muted)">evaluation/metrics.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Calculates all 22 quality metrics across agent outputs and benchmarks..</td>
+</tr>
+<tr>
+  <td>22</td>
+  <td><code>Calculate AB-4 Memory Utilization using the corrected ratio formula.</code><br><small style="color:var(--muted)">evaluation/metrics.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Calculate AB-4 Memory Utilization using the corrected ratio formula..</td>
+</tr>
+<tr>
+  <td>23</td>
+  <td><code>_fetch_earnings()</code><br><small style="color:var(--muted)">tools/earnings.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>get_earnings()</code><br><small style="color:var(--muted)">tools/earnings.py</small></td>
+  <td><code>_wait_for_rate_limit()</code><br><small style="color:var(--muted)">tools/earnings.py</small></td>
+  <td>_fetch_earnings() node in tools/earnings.py.</td>
+</tr>
+<tr>
+  <td>24</td>
+  <td><code>find_value()</code><br><small style="color:var(--muted)">tools/earnings.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>_number_or_none()</code><br><small style="color:var(--muted)">tools/earnings.py</small></td>
+  <td>find_value() node in tools/earnings.py.</td>
+</tr>
+<tr>
+  <td>25</td>
+  <td><code>get_earnings()</code><br><small style="color:var(--muted)">tools/earnings.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>build_default_registry()</code><br><small style="color:var(--muted)">tools/tool_registry.py</small><br><code>tool_registry.py</code><br><small style="color:var(--muted)">tools/tool_registry.py</small></td>
+  <td><code>_fetch_earnings()</code><br><small style="color:var(--muted)">tools/earnings.py</small></td>
+  <td>get_earnings() node in tools/earnings.py.</td>
+</tr>
+<tr>
+  <td>26</td>
+  <td><code>get_earnings_transcript()</code><br><small style="color:var(--muted)">tools/earnings.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>build_default_registry()</code><br><small style="color:var(--muted)">tools/tool_registry.py</small><br><code>tool_registry.py</code><br><small style="color:var(--muted)">tools/tool_registry.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>get_earnings_transcript() node in tools/earnings.py.</td>
+</tr>
+<tr>
+  <td>27</td>
+  <td><code>_number_or_none()</code><br><small style="color:var(--muted)">tools/earnings.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>find_value()</code><br><small style="color:var(--muted)">tools/earnings.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>_number_or_none() node in tools/earnings.py.</td>
+</tr>
+<tr>
+  <td>28</td>
+  <td><code>_wait_for_rate_limit()</code><br><small style="color:var(--muted)">tools/earnings.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>_fetch_earnings()</code><br><small style="color:var(--muted)">tools/earnings.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>_wait_for_rate_limit() node in tools/earnings.py.</td>
+</tr>
+<tr>
+  <td>29</td>
+  <td><code>earnings.py</code><br><small style="color:var(--muted)">tools/earnings.py</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td><code>tool_registry.py</code><br><small style="color:var(--muted)">tools/tool_registry.py</small></td>
+  <td><code>functools</code><br><code>math</code><br><code>pandas</code><br>+4 more</td>
+  <td>Module file in tools/earnings.py.</td>
+</tr>
+<tr>
+  <td>30</td>
+  <td><code>Any</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Any node in project.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>evaluation/metrics.py</code></td><td>16 nodes</td></tr>
+<tr><td><code>tools/earnings.py</code></td><td>13 nodes</td></tr>
+<tr><td><code>evaluation/dashboard.py</code></td><td>4 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: explains x16, calls x9, contains x9, references x6. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 6. Serving API ====== -->
+<h2 id="serve-api">6. Serving API</h2>
+<p>Serving API groups implementation around tools, financial, news, sec, mostly in tools/financial_api.py, tools/news_sentiment.py, tools/sec_edgar.py. This section covers 51 nodes and 71 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: Serving API (51 nodes, 71 edges)
+    subgraph serve_api_tools_financial_api_py_33589630["tools/financial_api.py"]
+        tools_financial_api_2befdf9f("financial_api.py")
+        tools_financial_api_fetch_financial_data_98d0ee1b("_fetch_financial_data()<br/><small>tools/financial_api.py</small>")
+        tools_financial_api_wait_for_rate_limit_6734e779("_wait_for_rate_limit()<br/><small>tools/financial_api.py</small>")
+        tools_financial_api_get_financial_data_97e08932("get_financial_data()<br/><small>tools/financial_api.py</small>")
+    end
+    subgraph serve_api_tools_news_sentiment_py_f90f9a32["tools/news_sentiment.py"]
+        tools_news_sentiment_b4ae2c84("news_sentiment.py")
+        tools_news_sentiment_analyze_news_sentiment_234237cc("analyze_news_sentiment()<br/><small>tools/news_sentiment.py</small>")
+        tools_news_sentiment_fetch_news_1b199903("_fetch_news()<br/><small>tools/news_sentiment.py</small>")
+        tools_news_sentiment_score_headlines_b786dead("_score_headlines()<br/><small>tools/news_sentiment.py</small>")
+    end
+    subgraph serve_api_tools_sec_edgar_py_ff78de97["tools/sec_edgar.py"]
+        tools_sec_edgar_235fb5bf("sec_edgar.py")
+        tools_sec_edgar_search_cached_9b4e9815("_search_cached()<br/><small>tools/sec_edgar.py</small>")
+        tools_sec_edgar_wait_for_rate_limit_5fd13466("_wait_for_rate_limit()<br/><small>tools/sec_edgar.py</small>")
+        tools_sec_edgar_search_sec_filings_4eb77179("search_sec_filings()<br/><small>tools/sec_edgar.py</small>")
+    end
+    subgraph serve_api_tools_web_search_py_a203c2db["tools/web_search.py"]
+        tools_web_search_7e7b5f49("web_search.py")
+        tools_web_search_search_cached_55e38a80("_search_cached()<br/><small>tools/web_search.py</small>")
+        tools_web_search_wait_for_rate_limit_7e316f1b("_wait_for_rate_limit()<br/><small>tools/web_search.py</small>")
+        tools_web_search_search_web_de27a0e0("search_web()<br/><small>tools/web_search.py</small>")
+    end
+    os_999a3419("os")
+    config_settings_get_int_c80623fb("_get_int()<br/><small>config/settings.py</small>")
+    tools_financial_api_fetch_financial_data_98d0ee1b -->|calls| tools_financial_api_wait_for_rate_limit_6734e779
+    tools_financial_api_get_financial_data_97e08932 -->|calls| tools_financial_api_fetch_financial_data_98d0ee1b
+    config_settings_get_int_c80623fb -->|calls| os_999a3419
+    tools_news_sentiment_analyze_news_sentiment_234237cc -->|calls| tools_news_sentiment_fetch_news_1b199903
+    tools_news_sentiment_analyze_news_sentiment_234237cc -->|calls| tools_news_sentiment_score_headlines_b786dead
+    tools_sec_edgar_search_cached_9b4e9815 -->|calls| tools_sec_edgar_wait_for_rate_limit_5fd13466
+    tools_sec_edgar_search_sec_filings_4eb77179 -->|calls| tools_sec_edgar_search_cached_9b4e9815
+    tools_web_search_search_cached_55e38a80 -->|calls| tools_web_search_wait_for_rate_limit_7e316f1b
+    tools_web_search_search_web_de27a0e0 -->|calls| tools_web_search_search_cached_55e38a80
+    %% Omitted for readability: 33 nodes, 0 edges
+    class tools_financial_api_2befdf9f api;
+    class tools_financial_api_fetch_financial_data_98d0ee1b function;
+    class tools_financial_api_wait_for_rate_limit_6734e779 function;
+    class tools_financial_api_get_financial_data_97e08932 function;
+    class tools_news_sentiment_b4ae2c84 module;
+    class tools_news_sentiment_analyze_news_sentiment_234237cc function;
+    class tools_news_sentiment_fetch_news_1b199903 function;
+    class tools_news_sentiment_score_headlines_b786dead function;
+    class tools_sec_edgar_235fb5bf module;
+    class tools_sec_edgar_search_cached_9b4e9815 function;
+    class tools_sec_edgar_wait_for_rate_limit_5fd13466 function;
+    class tools_sec_edgar_search_sec_filings_4eb77179 function;
+    class tools_web_search_7e7b5f49 module;
+    class tools_web_search_search_cached_55e38a80 function;
+    class tools_web_search_wait_for_rate_limit_7e316f1b function;
+    class tools_web_search_search_web_de27a0e0 function;
+    class os_999a3419 function;
+    class config_settings_get_int_c80623fb function;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>_get_int()</code><br><small style="color:var(--muted)">config/settings.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>os</code></td>
+  <td>_get_int() node in config/settings.py.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>validate_settings()</code><br><small style="color:var(--muted)">config/settings.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>validate_settings() node in config/settings.py.</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><code>analyze_news_sentiment()</code><br><small style="color:var(--muted)">tools/news_sentiment.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>build_default_registry()</code><br><small style="color:var(--muted)">tools/tool_registry.py</small><br><code>tool_registry.py</code><br><small style="color:var(--muted)">tools/tool_registry.py</small></td>
+  <td><code>_fetch_news()</code><br><small style="color:var(--muted)">tools/news_sentiment.py</small><br><code>_score_headlines()</code><br><small style="color:var(--muted)">tools/news_sentiment.py</small></td>
+  <td>Orchestrates analysis and returns structured documentation data.</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><code>_fetch_news()</code><br><small style="color:var(--muted)">tools/news_sentiment.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>analyze_news_sentiment()</code><br><small style="color:var(--muted)">tools/news_sentiment.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>_fetch_news() node in tools/news_sentiment.py.</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><code>_score_headlines()</code><br><small style="color:var(--muted)">tools/news_sentiment.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>analyze_news_sentiment()</code><br><small style="color:var(--muted)">tools/news_sentiment.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>_score_headlines() node in tools/news_sentiment.py.</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td><code>_search_cached()</code><br><small style="color:var(--muted)">tools/sec_edgar.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>search_sec_filings()</code><br><small style="color:var(--muted)">tools/sec_edgar.py</small></td>
+  <td><code>_wait_for_rate_limit()</code><br><small style="color:var(--muted)">tools/sec_edgar.py</small></td>
+  <td>Caches analysis results or computes cache keys.</td>
+</tr>
+<tr>
+  <td>7</td>
+  <td><code>search_sec_filings()</code><br><small style="color:var(--muted)">tools/sec_edgar.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>build_default_registry()</code><br><small style="color:var(--muted)">tools/tool_registry.py</small><br><code>tool_registry.py</code><br><small style="color:var(--muted)">tools/tool_registry.py</small></td>
+  <td><code>_search_cached()</code><br><small style="color:var(--muted)">tools/sec_edgar.py</small></td>
+  <td>search_sec_filings() node in tools/sec_edgar.py.</td>
+</tr>
+<tr>
+  <td>8</td>
+  <td><code>_wait_for_rate_limit()</code><br><small style="color:var(--muted)">tools/sec_edgar.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>_search_cached()</code><br><small style="color:var(--muted)">tools/sec_edgar.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>_wait_for_rate_limit() node in tools/sec_edgar.py.</td>
+</tr>
+<tr>
+  <td>9</td>
+  <td><code>_search_cached()</code><br><small style="color:var(--muted)">tools/web_search.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>search_web()</code><br><small style="color:var(--muted)">tools/web_search.py</small></td>
+  <td><code>_wait_for_rate_limit()</code><br><small style="color:var(--muted)">tools/web_search.py</small></td>
+  <td>Caches analysis results or computes cache keys.</td>
+</tr>
+<tr>
+  <td>10</td>
+  <td><code>search_web()</code><br><small style="color:var(--muted)">tools/web_search.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>build_default_registry()</code><br><small style="color:var(--muted)">tools/tool_registry.py</small><br><code>tool_registry.py</code><br><small style="color:var(--muted)">tools/tool_registry.py</small></td>
+  <td><code>_search_cached()</code><br><small style="color:var(--muted)">tools/web_search.py</small></td>
+  <td>search_web() node in tools/web_search.py.</td>
+</tr>
+<tr>
+  <td>11</td>
+  <td><code>_wait_for_rate_limit()</code><br><small style="color:var(--muted)">tools/web_search.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>_search_cached()</code><br><small style="color:var(--muted)">tools/web_search.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>_wait_for_rate_limit() node in tools/web_search.py.</td>
+</tr>
+<tr>
+  <td>12</td>
+  <td><code>settings.py</code><br><small style="color:var(--muted)">config/settings.py</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td><code>client.py</code><br><small style="color:var(--muted)">llm/client.py</small><br><code>financial_api.py</code><br><small style="color:var(--muted)">tools/financial_api.py</small><br><code>logging_config.py</code><br><small style="color:var(--muted)">config/logging_config.py</small><br>+4 more</td>
+  <td><code>dotenv</code><br><code>os</code><br><code>pathlib</code></td>
+  <td>Module file in config/settings.py.</td>
+</tr>
+<tr>
+  <td>13</td>
+  <td><code>news_sentiment.py</code><br><small style="color:var(--muted)">tools/news_sentiment.py</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td><code>tool_registry.py</code><br><small style="color:var(--muted)">tools/tool_registry.py</small></td>
+  <td><code>functools</code><br><code>settings.py</code><br><small style="color:var(--muted)">config/settings.py</small><br><code>tavily</code><br>+2 more</td>
+  <td>Module file in tools/news_sentiment.py.</td>
+</tr>
+<tr>
+  <td>14</td>
+  <td><code>Any</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Any node in project.</td>
+</tr>
+<tr>
+  <td>15</td>
+  <td><code>sec_edgar.py</code><br><small style="color:var(--muted)">tools/sec_edgar.py</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td><code>tool_registry.py</code><br><small style="color:var(--muted)">tools/tool_registry.py</small></td>
+  <td><code>functools</code><br><code>httpx</code><br><code>settings.py</code><br><small style="color:var(--muted)">config/settings.py</small><br>+4 more</td>
+  <td>Module file in tools/sec_edgar.py.</td>
+</tr>
+<tr>
+  <td>16</td>
+  <td><code>Any</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Any node in project.</td>
+</tr>
+<tr>
+  <td>17</td>
+  <td><code>web_search.py</code><br><small style="color:var(--muted)">tools/web_search.py</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td><code>tool_registry.py</code><br><small style="color:var(--muted)">tools/tool_registry.py</small></td>
+  <td><code>functools</code><br><code>settings.py</code><br><small style="color:var(--muted)">config/settings.py</small><br><code>tavily</code><br>+3 more</td>
+  <td>Module file in tools/web_search.py.</td>
+</tr>
+<tr>
+  <td>18</td>
+  <td><code>Any</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Any node in project.</td>
+</tr>
+<tr>
+  <td>19</td>
+  <td><code>Read an integer environment variable with a helpful error.</code><br><small style="color:var(--muted)">config/settings.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Read an integer environment variable with a helpful error..</td>
+</tr>
+<tr>
+  <td>20</td>
+  <td><code>Validate supported providers and optional API-key requirements.</code><br><small style="color:var(--muted)">config/settings.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Validate supported providers and optional API-key requirements..</td>
+</tr>
+<tr>
+  <td>21</td>
+  <td><code>Retrieve financial news with Tavily and estimate sentiment with TextBlob.</code><br><small style="color:var(--muted)">tools/news_sentiment.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Retrieve financial news with Tavily and estimate sentiment with TextBlob..</td>
+</tr>
+<tr>
+  <td>22</td>
+  <td><code>Estimate sentiment using TextBlob polarity.</code><br><small style="color:var(--muted)">tools/news_sentiment.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Estimate sentiment using TextBlob polarity..</td>
+</tr>
+<tr>
+  <td>23</td>
+  <td><code>Fetch and cache financial news results from Tavily.</code><br><small style="color:var(--muted)">tools/news_sentiment.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Fetch and cache financial news results from Tavily..</td>
+</tr>
+<tr>
+  <td>24</td>
+  <td><code>Analyze supplied headlines or fetch news and score sentiment.</code><br><small style="color:var(--muted)">tools/news_sentiment.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Analyze supplied headlines or fetch news and score sentiment..</td>
+</tr>
+<tr>
+  <td>25</td>
+  <td><code>Search SEC EDGAR filings for a ticker or company name.</code><br><small style="color:var(--muted)">tools/sec_edgar.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Search SEC EDGAR filings for a ticker or company name..</td>
+</tr>
+<tr>
+  <td>26</td>
+  <td><code>SEC EDGAR full-text filing search with caching and rate limiting.</code><br><small style="color:var(--muted)">tools/sec_edgar.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for SEC EDGAR full-text filing search with caching and rate limiting..</td>
+</tr>
+<tr>
+  <td>27</td>
+  <td><code>Space out SEC requests to avoid sending them too quickly.</code><br><small style="color:var(--muted)">tools/sec_edgar.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Space out SEC requests to avoid sending them too quickly..</td>
+</tr>
+<tr>
+  <td>28</td>
+  <td><code>Fetch and cache SEC full-text search results.</code><br><small style="color:var(--muted)">tools/sec_edgar.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Fetch and cache SEC full-text search results..</td>
+</tr>
+<tr>
+  <td>29</td>
+  <td><code>Live web search for financial research using Tavily.</code><br><small style="color:var(--muted)">tools/web_search.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Live web search for financial research using Tavily..</td>
+</tr>
+<tr>
+  <td>30</td>
+  <td><code>Space out requests made by this process.</code><br><small style="color:var(--muted)">tools/web_search.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Space out requests made by this process..</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>tools/financial_api.py</code></td><td>9 nodes</td></tr>
+<tr><td><code>tools/news_sentiment.py</code></td><td>8 nodes</td></tr>
+<tr><td><code>tools/sec_edgar.py</code></td><td>8 nodes</td></tr>
+<tr><td><code>tools/web_search.py</code></td><td>8 nodes</td></tr>
+<tr><td><code>config/settings.py</code></td><td>5 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: explains x18, contains x15, imports x13, calls x9. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 7. Tests & Fixtures ====== -->
+<h2 id="tests-fixtures">7. Tests &amp; Fixtures</h2>
+<p>Tests &amp; Fixtures groups implementation around test, tests, memory, vector, mostly in memory/context_manager.py, tests/test_llm_client.py, tools/tool_registry.py. This section covers 235 nodes and 391 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: Tests &amp; Fixtures (235 nodes, 391 edges)
+    subgraph tests_fixtures_synthesis_engine_py_99c3061c["synthesis/engine.py"]
+        synthesis_engine_c6ea4a0e("engine.py")
+        synthesis_engine_multisourcesynthesisengine_c9e09bbe("MultiSourceSynthesisEngine<br/><small>synthesis/engine.py</small>")
+        synthesis_engine_multisourcesynthesisengine_synt_7f1e45d2("synthesize_research_package()<br/><small>synthesis/engine.py</small>")
+        synthesis_engine_multisourcesynthesisengine_init_7d401eca("__init__()<br/><small>synthesis/engine.py</small>")
+        synthesis_engine_multisourcesynthesisengine_tria_4c8eca71("triangulate_numerical_metric()<br/><small>synthesis/engine.py</small>")
+    end
+    subgraph tests_fixtures_synthesis_conflict_resolver_py_9bfccbea["synthesis/conflict_resolver.py"]
+        synthesis_conflict_resolver_conflictresolver_4fa87672("ConflictResolver<br/><small>synthesis/conflict_resolver.py</small>")
+        synthesis_conflict_resolver_conflictresolver_ini_a26dca04("__init__()<br/><small>synthesis/conflict_resolver.py</small>")
+        synthesis_conflict_resolver_conflictresolver_cla_26e4b945("classify_source_tier()<br/><small>synthesis/conflict_resolver.py</small>")
+        synthesis_conflict_resolver_conflictresolver_res_ba9a4a0c("resolve()<br/><small>synthesis/conflict_resolver.py</small>")
+    end
+    subgraph tests_fixtures_synthesis_narrative_py_61b96c56["synthesis/narrative.py"]
+        synthesis_narrative_narrativesynthesizer_b768d838("NarrativeSynthesizer<br/><small>synthesis/narrative.py</small>")
+        synthesis_narrative_narrativesynthesizer_analyze_3d4b14df("analyze_sentiment_fact_alignment()<br/><small>synthesis/narrative.py</small>")
+        synthesis_narrative_narrativesynthesizer_thread_a68b8841("thread_narrative()<br/><small>synthesis/narrative.py</small>")
+    end
+    memory_context_manager_contextmanager_6cd33a4b("ContextManager<br/><small>memory/context_manager.py</small>")
+    memory_episodic_episodicmemory_c321a67e("EpisodicMemory<br/><small>memory/episodic.py</small>")
+    tests_test_agent_core_ea7f3b51("test_agent_core.py")
+    tests_test_memory_10673b8e("test_memory.py")
+    tests_test_synthesis_afefa551("test_synthesis.py")
+    tools_tool_registry_toolregistry_684a160e("ToolRegistry<br/><small>tools/tool_registry.py</small>")
+    synthesis_conflict_resolver_conflictresolver_4fa87672 -->|method| synthesis_conflict_resolver_conflictresolver_ini_a26dca04
+    synthesis_conflict_resolver_conflictresolver_4fa87672 -->|method| synthesis_conflict_resolver_conflictresolver_cla_26e4b945
+    synthesis_conflict_resolver_conflictresolver_4fa87672 -->|method| synthesis_conflict_resolver_conflictresolver_res_ba9a4a0c
+    synthesis_engine_multisourcesynthesisengine_c9e09bbe -->|method| synthesis_engine_multisourcesynthesisengine_synt_7f1e45d2
+    synthesis_engine_multisourcesynthesisengine_c9e09bbe -->|method| synthesis_engine_multisourcesynthesisengine_init_7d401eca
+    synthesis_engine_multisourcesynthesisengine_c9e09bbe -->|method| synthesis_engine_multisourcesynthesisengine_tria_4c8eca71
+    synthesis_narrative_narrativesynthesizer_b768d838 -->|method| synthesis_narrative_narrativesynthesizer_analyze_3d4b14df
+    synthesis_narrative_narrativesynthesizer_b768d838 -->|method| synthesis_narrative_narrativesynthesizer_thread_a68b8841
+    synthesis_engine_multisourcesynthesisengine_init_7d401eca -->|calls| synthesis_conflict_resolver_conflictresolver_4fa87672
+    synthesis_engine_multisourcesynthesisengine_init_7d401eca -->|calls| synthesis_narrative_narrativesynthesizer_b768d838
+    synthesis_engine_c6ea4a0e -->|imports| synthesis_conflict_resolver_conflictresolver_4fa87672
+    synthesis_engine_c6ea4a0e -->|imports| synthesis_narrative_narrativesynthesizer_b768d838
+    tests_test_synthesis_afefa551 -->|imports| synthesis_conflict_resolver_conflictresolver_4fa87672
+    tests_test_synthesis_afefa551 -->|imports| synthesis_narrative_narrativesynthesizer_b768d838
+    tests_test_synthesis_afefa551 -->|imports| synthesis_engine_multisourcesynthesisengine_c9e09bbe
+    tests_test_synthesis_afefa551 -->|imports| synthesis_engine_c6ea4a0e
+    tests_test_memory_10673b8e -->|imports| memory_context_manager_contextmanager_6cd33a4b
+    tests_test_memory_10673b8e -->|imports| memory_episodic_episodicmemory_c321a67e
+    tests_test_agent_core_ea7f3b51 -->|imports| tools_tool_registry_toolregistry_684a160e
+    synthesis_engine_multisourcesynthesisengine_c9e09bbe -->|uses| synthesis_conflict_resolver_conflictresolver_4fa87672
+    synthesis_engine_multisourcesynthesisengine_c9e09bbe -->|uses| synthesis_narrative_narrativesynthesizer_b768d838
+    synthesis_engine_multisourcesynthesisengine_synt_7f1e45d2 -->|calls| synthesis_narrative_narrativesynthesizer_thread_a68b8841
+    synthesis_engine_multisourcesynthesisengine_tria_4c8eca71 -->|calls| synthesis_conflict_resolver_conflictresolver_cla_26e4b945
+    %% Omitted for readability: 217 nodes, 0 edges
+    class synthesis_engine_c6ea4a0e module;
+    class synthesis_engine_multisourcesynthesisengine_c9e09bbe klass;
+    class synthesis_engine_multisourcesynthesisengine_synt_7f1e45d2 function;
+    class synthesis_engine_multisourcesynthesisengine_init_7d401eca function;
+    class synthesis_engine_multisourcesynthesisengine_tria_4c8eca71 function;
+    class synthesis_conflict_resolver_conflictresolver_4fa87672 klass;
+    class synthesis_conflict_resolver_conflictresolver_ini_a26dca04 function;
+    class synthesis_conflict_resolver_conflictresolver_cla_26e4b945 function;
+    class synthesis_conflict_resolver_conflictresolver_res_ba9a4a0c function;
+    class synthesis_narrative_narrativesynthesizer_b768d838 klass;
+    class synthesis_narrative_narrativesynthesizer_analyze_3d4b14df function;
+    class synthesis_narrative_narrativesynthesizer_thread_a68b8841 function;
+    class memory_context_manager_contextmanager_6cd33a4b klass;
+    class memory_episodic_episodicmemory_c321a67e klass;
+    class tests_test_agent_core_ea7f3b51 test;
+    class tests_test_memory_10673b8e test;
+    class tests_test_synthesis_afefa551 test;
+    class tools_tool_registry_toolregistry_684a160e klass;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>ConflictResolution</code><br><small style="color:var(--muted)">synthesis/conflict_resolver.py</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td><code>resolve()</code><br><small style="color:var(--muted)">synthesis/conflict_resolver.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>ConflictResolution node in synthesis/conflict_resolver.py.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>ConflictResolver</code><br><small style="color:var(--muted)">synthesis/conflict_resolver.py</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td><code>__init__()</code><br><small style="color:var(--muted)">synthesis/engine.py</small><br><code>engine.py</code><br><small style="color:var(--muted)">synthesis/engine.py</small><br><code>MultiSourceSynthesisEngine</code><br><small style="color:var(--muted)">synthesis/engine.py</small><br>+2 more</td>
+  <td><code>__init__()</code><br><small style="color:var(--muted)">synthesis/conflict_resolver.py</small><br><code>classify_source_tier()</code><br><small style="color:var(--muted)">synthesis/conflict_resolver.py</small><br><code>resolve()</code><br><small style="color:var(--muted)">synthesis/conflict_resolver.py</small></td>
+  <td>ConflictResolver node in synthesis/conflict_resolver.py.</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><code>ReliabilityTier</code><br><small style="color:var(--muted)">synthesis/conflict_resolver.py</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td><code>conflict resolver restatement()</code><br><small style="color:var(--muted)">tests/test_synthesis.py</small><br><code>engine.py</code><br><small style="color:var(--muted)">synthesis/engine.py</small><br><code>highest tier rule()</code><br><small style="color:var(--muted)">tests/test_synthesis.py</small><br>+5 more</td>
+  <td>No direct outbound edge</td>
+  <td>ReliabilityTier node in synthesis/conflict_resolver.py.</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><code>SourceDataPoint</code><br><small style="color:var(--muted)">synthesis/conflict_resolver.py</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td><code>conflict resolver restatement()</code><br><small style="color:var(--muted)">tests/test_synthesis.py</small><br><code>engine.py</code><br><small style="color:var(--muted)">synthesis/engine.py</small><br><code>highest tier rule()</code><br><small style="color:var(--muted)">tests/test_synthesis.py</small><br>+4 more</td>
+  <td>No direct outbound edge</td>
+  <td>SourceDataPoint node in synthesis/conflict_resolver.py.</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><code>MultiSourceSynthesisEngine</code><br><small style="color:var(--muted)">synthesis/engine.py</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td><code>engine()</code><br><small style="color:var(--muted)">tests/test_synthesis.py</small><br><code>test_synthesis.py</code><br><small style="color:var(--muted)">tests/test_synthesis.py</small></td>
+  <td><code>__init__()</code><br><small style="color:var(--muted)">synthesis/engine.py</small><br><code>ConflictResolver</code><br><small style="color:var(--muted)">synthesis/conflict_resolver.py</small><br><code>NarrativeSynthesizer</code><br><small style="color:var(--muted)">synthesis/narrative.py</small><br>+4 more</td>
+  <td>MultiSourceSynthesisEngine node in synthesis/engine.py.</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td><code>NarrativeSynthesizer</code><br><small style="color:var(--muted)">synthesis/narrative.py</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td><code>__init__()</code><br><small style="color:var(--muted)">synthesis/engine.py</small><br><code>engine.py</code><br><small style="color:var(--muted)">synthesis/engine.py</small><br><code>MultiSourceSynthesisEngine</code><br><small style="color:var(--muted)">synthesis/engine.py</small><br>+2 more</td>
+  <td><code>analyze_sentiment_fact_alignment()</code><br><small style="color:var(--muted)">synthesis/narrative.py</small><br><code>thread_narrative()</code><br><small style="color:var(--muted)">synthesis/narrative.py</small></td>
+  <td>NarrativeSynthesizer node in synthesis/narrative.py.</td>
+</tr>
+<tr>
+  <td>7</td>
+  <td><code>NarrativeThread</code><br><small style="color:var(--muted)">synthesis/narrative.py</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td><code>engine.py</code><br><small style="color:var(--muted)">synthesis/engine.py</small><br><code>thread_narrative()</code><br><small style="color:var(--muted)">synthesis/narrative.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>NarrativeThread node in synthesis/narrative.py.</td>
+</tr>
+<tr>
+  <td>8</td>
+  <td><code>resolver()</code><br><small style="color:var(--muted)">tests/test_synthesis.py</small></td>
+  <td><span class="tag tag-func">Test</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>ConflictResolver</code><br><small style="color:var(--muted)">synthesis/conflict_resolver.py</small></td>
+  <td>resolver() node in tests/test_synthesis.py.</td>
+</tr>
+<tr>
+  <td>9</td>
+  <td><code>engine()</code><br><small style="color:var(--muted)">tests/test_synthesis.py</small></td>
+  <td><span class="tag tag-func">Test</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>MultiSourceSynthesisEngine</code><br><small style="color:var(--muted)">synthesis/engine.py</small></td>
+  <td>engine() node in tests/test_synthesis.py.</td>
+</tr>
+<tr>
+  <td>10</td>
+  <td><code>narrative()</code><br><small style="color:var(--muted)">tests/test_synthesis.py</small></td>
+  <td><span class="tag tag-func">Test</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>NarrativeSynthesizer</code><br><small style="color:var(--muted)">synthesis/narrative.py</small></td>
+  <td>narrative() node in tests/test_synthesis.py.</td>
+</tr>
+<tr>
+  <td>11</td>
+  <td><code>.classify_source_tier()</code><br><small style="color:var(--muted)">synthesis/conflict_resolver.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>ConflictResolver</code><br><small style="color:var(--muted)">synthesis/conflict_resolver.py</small><br><code>resolver tier classification()</code><br><small style="color:var(--muted)">tests/test_synthesis.py</small><br><code>triangulate_numerical_metric()</code><br><small style="color:var(--muted)">synthesis/engine.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>.classify_source_tier() node in synthesis/conflict_resolver.py.</td>
+</tr>
+<tr>
+  <td>12</td>
+  <td><code>.__init__()</code><br><small style="color:var(--muted)">synthesis/conflict_resolver.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>ConflictResolver</code><br><small style="color:var(--muted)">synthesis/conflict_resolver.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>.__init__() node in synthesis/conflict_resolver.py.</td>
+</tr>
+<tr>
+  <td>13</td>
+  <td><code>.resolve()</code><br><small style="color:var(--muted)">synthesis/conflict_resolver.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>conflict resolver restatement()</code><br><small style="color:var(--muted)">tests/test_synthesis.py</small><br><code>ConflictResolver</code><br><small style="color:var(--muted)">synthesis/conflict_resolver.py</small><br><code>highest tier rule()</code><br><small style="color:var(--muted)">tests/test_synthesis.py</small><br>+1 more</td>
+  <td><code>ConflictResolution</code><br><small style="color:var(--muted)">synthesis/conflict_resolver.py</small></td>
+  <td>.resolve() node in synthesis/conflict_resolver.py.</td>
+</tr>
+<tr>
+  <td>14</td>
+  <td><code>.__init__()</code><br><small style="color:var(--muted)">synthesis/engine.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>MultiSourceSynthesisEngine</code><br><small style="color:var(--muted)">synthesis/engine.py</small></td>
+  <td><code>ConflictResolver</code><br><small style="color:var(--muted)">synthesis/conflict_resolver.py</small><br><code>NarrativeSynthesizer</code><br><small style="color:var(--muted)">synthesis/narrative.py</small></td>
+  <td>.__init__() node in synthesis/engine.py.</td>
+</tr>
+<tr>
+  <td>15</td>
+  <td><code>.synthesize_research_package()</code><br><small style="color:var(--muted)">synthesis/engine.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>MultiSourceSynthesisEngine</code><br><small style="color:var(--muted)">synthesis/engine.py</small></td>
+  <td><code>thread_narrative()</code><br><small style="color:var(--muted)">synthesis/narrative.py</small></td>
+  <td>.synthesize_research_package() node in synthesis/engine.py.</td>
+</tr>
+<tr>
+  <td>16</td>
+  <td><code>.triangulate_numerical_metric()</code><br><small style="color:var(--muted)">synthesis/engine.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>MultiSourceSynthesisEngine</code><br><small style="color:var(--muted)">synthesis/engine.py</small><br><code>test quantitative triangulation()</code><br><small style="color:var(--muted)">tests/test_synthesis.py</small></td>
+  <td><code>classify_source_tier()</code><br><small style="color:var(--muted)">synthesis/conflict_resolver.py</small><br><code>SourceDataPoint</code><br><small style="color:var(--muted)">synthesis/conflict_resolver.py</small></td>
+  <td>.triangulate_numerical_metric() node in synthesis/engine.py.</td>
+</tr>
+<tr>
+  <td>17</td>
+  <td><code>.analyze_sentiment_fact_alignment()</code><br><small style="color:var(--muted)">synthesis/narrative.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>NarrativeSynthesizer</code><br><small style="color:var(--muted)">synthesis/narrative.py</small><br><code>sentiment fact divergence()</code><br><small style="color:var(--muted)">tests/test_synthesis.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>Orchestrates analysis and returns structured documentation data.</td>
+</tr>
+<tr>
+  <td>18</td>
+  <td><code>.thread_narrative()</code><br><small style="color:var(--muted)">synthesis/narrative.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>NarrativeSynthesizer</code><br><small style="color:var(--muted)">synthesis/narrative.py</small><br><code>synthesize_research_package()</code><br><small style="color:var(--muted)">synthesis/engine.py</small></td>
+  <td><code>NarrativeThread</code><br><small style="color:var(--muted)">synthesis/narrative.py</small></td>
+  <td>.thread_narrative() node in synthesis/narrative.py.</td>
+</tr>
+<tr>
+  <td>19</td>
+  <td><code>test_conflict_resolver_highest_tier_rule()</code><br><small style="color:var(--muted)">tests/test_synthesis.py</small></td>
+  <td><span class="tag tag-func">Test</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>ReliabilityTier</code><br><small style="color:var(--muted)">synthesis/conflict_resolver.py</small><br><code>resolve()</code><br><small style="color:var(--muted)">synthesis/conflict_resolver.py</small><br><code>SourceDataPoint</code><br><small style="color:var(--muted)">synthesis/conflict_resolver.py</small></td>
+  <td>Verifies imports, entry points, or version behavior.</td>
+</tr>
+<tr>
+  <td>20</td>
+  <td><code>test_conflict_resolver_restatement()</code><br><small style="color:var(--muted)">tests/test_synthesis.py</small></td>
+  <td><span class="tag tag-func">Test</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>ReliabilityTier</code><br><small style="color:var(--muted)">synthesis/conflict_resolver.py</small><br><code>resolve()</code><br><small style="color:var(--muted)">synthesis/conflict_resolver.py</small><br><code>SourceDataPoint</code><br><small style="color:var(--muted)">synthesis/conflict_resolver.py</small></td>
+  <td>Verifies imports, entry points, or version behavior.</td>
+</tr>
+<tr>
+  <td>21</td>
+  <td><code>test_conflict_resolver_temporal_difference()</code><br><small style="color:var(--muted)">tests/test_synthesis.py</small></td>
+  <td><span class="tag tag-func">Test</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>ReliabilityTier</code><br><small style="color:var(--muted)">synthesis/conflict_resolver.py</small><br><code>resolve()</code><br><small style="color:var(--muted)">synthesis/conflict_resolver.py</small><br><code>SourceDataPoint</code><br><small style="color:var(--muted)">synthesis/conflict_resolver.py</small></td>
+  <td>Verifies imports, entry points, or version behavior.</td>
+</tr>
+<tr>
+  <td>22</td>
+  <td><code>test_conflict_resolver_tier_classification()</code><br><small style="color:var(--muted)">tests/test_synthesis.py</small></td>
+  <td><span class="tag tag-func">Test</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>classify_source_tier()</code><br><small style="color:var(--muted)">synthesis/conflict_resolver.py</small><br><code>ReliabilityTier</code><br><small style="color:var(--muted)">synthesis/conflict_resolver.py</small></td>
+  <td>Verifies imports, entry points, or version behavior.</td>
+</tr>
+<tr>
+  <td>23</td>
+  <td><code>test_quantitative_triangulation()</code><br><small style="color:var(--muted)">tests/test_synthesis.py</small></td>
+  <td><span class="tag tag-func">Test</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>ReliabilityTier</code><br><small style="color:var(--muted)">synthesis/conflict_resolver.py</small><br><code>triangulate_numerical_metric()</code><br><small style="color:var(--muted)">synthesis/engine.py</small></td>
+  <td>Verifies imports, entry points, or version behavior.</td>
+</tr>
+<tr>
+  <td>24</td>
+  <td><code>test_sentiment_fact_divergence()</code><br><small style="color:var(--muted)">tests/test_synthesis.py</small></td>
+  <td><span class="tag tag-func">Test</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>analyze_sentiment_fact_alignment()</code><br><small style="color:var(--muted)">synthesis/narrative.py</small></td>
+  <td>Verifies imports, entry points, or version behavior.</td>
+</tr>
+<tr>
+  <td>25</td>
+  <td><code>IntEnum</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>IntEnum node in project.</td>
+</tr>
+<tr>
+  <td>26</td>
+  <td><code>conflict_resolver.py</code><br><small style="color:var(--muted)">synthesis/conflict_resolver.py</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td><code>engine.py</code><br><small style="color:var(--muted)">synthesis/engine.py</small><br><code>test_synthesis.py</code><br><small style="color:var(--muted)">tests/test_synthesis.py</small></td>
+  <td><code>dataclasses</code><br><code>enum</code><br><code>logging</code><br>+1 more</td>
+  <td>Module file in synthesis/conflict_resolver.py.</td>
+</tr>
+<tr>
+  <td>27</td>
+  <td><code>engine.py</code><br><small style="color:var(--muted)">synthesis/engine.py</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td><code>test_synthesis.py</code><br><small style="color:var(--muted)">tests/test_synthesis.py</small></td>
+  <td><code>conflict_resolver.py</code><br><small style="color:var(--muted)">synthesis/conflict_resolver.py</small><br><code>ConflictResolver</code><br><small style="color:var(--muted)">synthesis/conflict_resolver.py</small><br><code>logging</code><br>+6 more</td>
+  <td>Module file in synthesis/engine.py.</td>
+</tr>
+<tr>
+  <td>28</td>
+  <td><code>Any</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Any node in project.</td>
+</tr>
+<tr>
+  <td>29</td>
+  <td><code>narrative.py</code><br><small style="color:var(--muted)">synthesis/narrative.py</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td><code>engine.py</code><br><small style="color:var(--muted)">synthesis/engine.py</small><br><code>test_synthesis.py</code><br><small style="color:var(--muted)">tests/test_synthesis.py</small></td>
+  <td><code>dataclasses</code><br><code>logging</code><br><code>typing</code></td>
+  <td>Module file in synthesis/narrative.py.</td>
+</tr>
+<tr>
+  <td>30</td>
+  <td><code>Any</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Any node in project.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>memory/context_manager.py</code></td><td>20 nodes</td></tr>
+<tr><td><code>tests/test_llm_client.py</code></td><td>18 nodes</td></tr>
+<tr><td><code>tools/tool_registry.py</code></td><td>17 nodes</td></tr>
+<tr><td><code>synthesis/conflict_resolver.py</code></td><td>15 nodes</td></tr>
+<tr><td><code>memory/episodic.py</code></td><td>14 nodes</td></tr>
+<tr><td><code>llm/client.py</code></td><td>13 nodes</td></tr>
+<tr><td><code>tests/test_agent_core.py</code></td><td>13 nodes</td></tr>
+<tr><td><code>memory/vector_store.py</code></td><td>12 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: calls x116, explains x72, contains x61, method x38. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 8. Calculatorpy Tools Calculate ====== -->
+<h2 id="calculatorpy-tools-calculate">8. Calculatorpy Tools Calculate</h2>
+<p>Calculatorpy Tools Calculate groups implementation around calculatorpy, tools, calculate, financial, mostly in tools/calculator.py. This section covers 15 nodes and 24 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: Calculatorpy Tools Calculate (15 nodes, 24 edges)
+    subgraph calculatorpy_tools_calculate_tools_calculator_py_6ba3e25d["tools/calculator.py"]
+        tools_calculator_calculation_engine_5cf172a8("calculation_engine()<br/><small>tools/calculator.py</small>")
+        tools_calculator_ebb7704d("calculator.py")
+        tools_calculator_calculate_b32f29cf("calculate()<br/><small>tools/calculator.py</small>")
+        tools_calculator_calculate_dcf_5b154d1d("calculate_dcf()<br/><small>tools/calculator.py</small>")
+        tools_calculator_calculate_cagr_e7e40a48("calculate_cagr()<br/><small>tools/calculator.py</small>")
+        tools_calculator_calculate_financial_ratios_b759db49("calculate_financial_ratios()<br/><small>tools/calculator.py</small>")
+        tools_calculator_rationale_20_6cfbe5e9("Calculate a basic arithmetic operation.<br/><small>tools/calculator.py</small>")
+        tools_calculator_rationale_116_1801a7d9("Calculate key financial ratios from bal...<br/><small>tools/calculator.py</small>")
+        tools_calculator_rationale_99_9cf73a04("Compute Compound Annual Growth Rate (CA...<br/><small>tools/calculator.py</small>")
+        tools_calculator_rationale_161_b8e7a788("Execute high-precision financial calcul...<br/><small>tools/calculator.py</small>")
+        tools_calculator_rationale_48_cf6c66e8("Perform Discounted Cash Flow (DCF) valu...<br/><small>tools/calculator.py</small>")
+        tools_calculator_rationale_1_53646956("Safe calculator and advanced financial...<br/><small>tools/calculator.py</small>")
+    end
+    subgraph calculatorpy_tools_calculate_External_generated_2b3514a3["External / generated"]
+        math_7a488390("math")
+        operator_fe96dd39("operator")
+        tools_calculator_py_any_81f088a1("Any")
+    end
+    tools_calculator_calculate_b32f29cf -->|calls| math_7a488390
+    tools_calculator_calculate_dcf_5b154d1d -->|calls| math_7a488390
+    tools_calculator_calculation_engine_5cf172a8 -->|calls| tools_calculator_calculate_dcf_5b154d1d
+    tools_calculator_calculation_engine_5cf172a8 -->|calls| tools_calculator_calculate_cagr_e7e40a48
+    tools_calculator_calculation_engine_5cf172a8 -->|calls| tools_calculator_calculate_financial_ratios_b759db49
+    tools_calculator_calculation_engine_5cf172a8 -->|calls| tools_calculator_calculate_b32f29cf
+    tools_calculator_ebb7704d -->|imports| math_7a488390
+    tools_calculator_ebb7704d -->|imports| operator_fe96dd39
+    class tools_calculator_calculation_engine_5cf172a8 function;
+    class tools_calculator_ebb7704d module;
+    class tools_calculator_calculate_b32f29cf function;
+    class tools_calculator_calculate_dcf_5b154d1d function;
+    class tools_calculator_calculate_cagr_e7e40a48 function;
+    class tools_calculator_calculate_financial_ratios_b759db49 function;
+    class tools_calculator_rationale_20_6cfbe5e9 concept;
+    class tools_calculator_rationale_116_1801a7d9 concept;
+    class tools_calculator_rationale_99_9cf73a04 concept;
+    class tools_calculator_rationale_161_b8e7a788 concept;
+    class tools_calculator_rationale_48_cf6c66e8 concept;
+    class tools_calculator_rationale_1_53646956 concept;
+    class math_7a488390 function;
+    class operator_fe96dd39 function;
+    class tools_calculator_py_any_81f088a1 klass;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>calculate()</code><br><small style="color:var(--muted)">tools/calculator.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>build_default_registry()</code><br><small style="color:var(--muted)">tools/tool_registry.py</small><br><code>calculation_engine()</code><br><small style="color:var(--muted)">tools/calculator.py</small><br><code>tool_registry.py</code><br><small style="color:var(--muted)">tools/tool_registry.py</small></td>
+  <td><code>math</code></td>
+  <td>calculate() node in tools/calculator.py.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>calculate_cagr()</code><br><small style="color:var(--muted)">tools/calculator.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>calculation_engine()</code><br><small style="color:var(--muted)">tools/calculator.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>calculate_cagr() node in tools/calculator.py.</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><code>calculate_dcf()</code><br><small style="color:var(--muted)">tools/calculator.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>calculation_engine()</code><br><small style="color:var(--muted)">tools/calculator.py</small></td>
+  <td><code>math</code></td>
+  <td>calculate_dcf() node in tools/calculator.py.</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><code>calculate_financial_ratios()</code><br><small style="color:var(--muted)">tools/calculator.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>calculation_engine()</code><br><small style="color:var(--muted)">tools/calculator.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>calculate_financial_ratios() node in tools/calculator.py.</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><code>calculation_engine()</code><br><small style="color:var(--muted)">tools/calculator.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>build_default_registry()</code><br><small style="color:var(--muted)">tools/tool_registry.py</small><br><code>tool_registry.py</code><br><small style="color:var(--muted)">tools/tool_registry.py</small></td>
+  <td><code>calculate()</code><br><small style="color:var(--muted)">tools/calculator.py</small><br><code>calculate_cagr()</code><br><small style="color:var(--muted)">tools/calculator.py</small><br><code>calculate_dcf()</code><br><small style="color:var(--muted)">tools/calculator.py</small><br>+1 more</td>
+  <td>calculation_engine() node in tools/calculator.py.</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td><code>calculator.py</code><br><small style="color:var(--muted)">tools/calculator.py</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td><code>tool_registry.py</code><br><small style="color:var(--muted)">tools/tool_registry.py</small></td>
+  <td><code>math</code><br><code>operator</code><br><code>typing</code></td>
+  <td>Module file in tools/calculator.py.</td>
+</tr>
+<tr>
+  <td>7</td>
+  <td><code>Any</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Any node in project.</td>
+</tr>
+<tr>
+  <td>8</td>
+  <td><code>Safe calculator and advanced financial calculation engine for research analysis.</code><br><small style="color:var(--muted)">tools/calculator.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Safe calculator and advanced financial calculation engine for research analysis..</td>
+</tr>
+<tr>
+  <td>9</td>
+  <td><code>Calculate key financial ratios from balance sheet and income statement items.</code><br><small style="color:var(--muted)">tools/calculator.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Calculate key financial ratios from balance sheet and income statement items..</td>
+</tr>
+<tr>
+  <td>10</td>
+  <td><code>Execute high-precision financial calculations with explicit intermediate steps.</code><br><small style="color:var(--muted)">tools/calculator.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Execute high-precision financial calculations with explicit intermediate steps..</td>
+</tr>
+<tr>
+  <td>11</td>
+  <td><code>Calculate a basic arithmetic operation.</code><br><small style="color:var(--muted)">tools/calculator.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Calculate a basic arithmetic operation..</td>
+</tr>
+<tr>
+  <td>12</td>
+  <td><code>Perform Discounted Cash Flow (DCF) valuation with intermediate steps. Args:…</code><br><small style="color:var(--muted)">tools/calculator.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Perform Discounted Cash Flow (DCF) valuation with intermediate steps. Args:….</td>
+</tr>
+<tr>
+  <td>13</td>
+  <td><code>Compute Compound Annual Growth Rate (CAGR).</code><br><small style="color:var(--muted)">tools/calculator.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Compute Compound Annual Growth Rate (CAGR)..</td>
+</tr>
+<tr>
+  <td>14</td>
+  <td><code>math</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>calculate()</code><br><small style="color:var(--muted)">tools/calculator.py</small><br><code>calculate_dcf()</code><br><small style="color:var(--muted)">tools/calculator.py</small><br><code>calculator.py</code><br><small style="color:var(--muted)">tools/calculator.py</small><br>+1 more</td>
+  <td>No direct outbound edge</td>
+  <td>math node in project.</td>
+</tr>
+<tr>
+  <td>15</td>
+  <td><code>operator</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>calculator.py</code><br><small style="color:var(--muted)">tools/calculator.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>operator node in project.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>tools/calculator.py</code></td><td>12 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: calls x6, explains x6, references x5, contains x5. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 9. Logging Config Configpy ====== -->
+<h2 id="logging-config-configpy">9. Logging Config Configpy</h2>
+<p>Logging Config Configpy groups implementation around logging, config, configpy, clientpy, mostly in config/logging_config.py, llm/client.py, config/__init__.py. This section covers 10 nodes and 10 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: Logging Config Configpy (10 nodes, 10 edges)
+    subgraph logging_config_configpy_config_logging_config_py_faa5ad9f["config/logging_config.py"]
+        config_logging_config_a2d52b00("logging_config.py")
+        config_logging_config_setup_logging_73c9c972("setup_logging()<br/><small>config/logging_config.py</small>")
+        config_logging_config_rationale_2_815d8eda("Centralized logging configuration for t...<br/><small>config/logging_config.py</small>")
+        config_logging_config_rationale_21_cda343d1("Configure console and rotating file log...<br/><small>config/logging_config.py</small>")
+    end
+    subgraph logging_config_configpy_External_generated_5e3d2bc8["External / generated"]
+        logging_handlers_24a5e0b4("logging_handlers")
+        tenacity_d664ba6f("tenacity")
+        litellm_6995433a("litellm")
+    end
+    subgraph logging_config_configpy_llm_client_py_133e6927["llm/client.py"]
+        llm_client_1a89e9d3("client.py")
+        llm_client_rationale_2_3938c5f9("Provider-independent LLM client with re...<br/><small>llm/client.py</small>")
+    end
+    config_init_eaf752f9("__init__.py")
+    config_logging_config_a2d52b00 -->|imports| logging_handlers_24a5e0b4
+    llm_client_1a89e9d3 -->|imports| config_logging_config_setup_logging_73c9c972
+    llm_client_1a89e9d3 -->|imports| tenacity_d664ba6f
+    llm_client_1a89e9d3 -->|imports| config_init_eaf752f9
+    llm_client_1a89e9d3 -->|imports| config_logging_config_a2d52b00
+    llm_client_1a89e9d3 -->|imports| litellm_6995433a
+    class config_logging_config_a2d52b00 module;
+    class config_logging_config_setup_logging_73c9c972 function;
+    class config_logging_config_rationale_2_815d8eda concept;
+    class config_logging_config_rationale_21_cda343d1 concept;
+    class logging_handlers_24a5e0b4 function;
+    class tenacity_d664ba6f function;
+    class litellm_6995433a function;
+    class llm_client_1a89e9d3 entry;
+    class llm_client_rationale_2_3938c5f9 concept;
+    class config_init_eaf752f9 module;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>setup_logging()</code><br><small style="color:var(--muted)">config/logging_config.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>client.py</code><br><small style="color:var(--muted)">llm/client.py</small><br><code>main()</code><br><small style="color:var(--muted)">main.py</small><br><code>main.py</code><br><small style="color:var(--muted)">main.py</small><br>+1 more</td>
+  <td><code>logging</code></td>
+  <td>setup_logging() node in config/logging_config.py.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>config/__init__.py</code><br><small style="color:var(--muted)">config/__init__.py</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td><code>client.py</code><br><small style="color:var(--muted)">llm/client.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>Module file in config/__init__.py.</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><code>logging_config.py</code><br><small style="color:var(--muted)">config/logging_config.py</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td><code>client.py</code><br><small style="color:var(--muted)">llm/client.py</small><br><code>main.py</code><br><small style="color:var(--muted)">main.py</small><br><code>tool_registry.py</code><br><small style="color:var(--muted)">tools/tool_registry.py</small></td>
+  <td><code>logging</code><br><code>logging_handlers</code><br><code>pathlib</code><br>+1 more</td>
+  <td>Module file in config/logging_config.py.</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><code>client.py</code><br><small style="color:var(--muted)">llm/client.py</small></td>
+  <td><span class="tag tag-cmd">Entry</span></td>
+  <td><code>core.py</code><br><small style="color:var(--muted)">agent/core.py</small><br><code>main.py</code><br><small style="color:var(--muted)">main.py</small><br><code>run_challenge3.py</code><br><small style="color:var(--muted)">scripts/run_challenge3.py</small><br>+1 more</td>
+  <td><code>__init__.py</code><br><small style="color:var(--muted)">config/__init__.py</small><br><code>dataclasses</code><br><code>litellm</code><br>+6 more</td>
+  <td>Module file in llm/client.py.</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><code>Centralized logging configuration for the financial research agent.</code><br><small style="color:var(--muted)">config/logging_config.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Centralized logging configuration for the financial research agent..</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td><code>Configure console and rotating file logging.</code><br><small style="color:var(--muted)">config/logging_config.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Configure console and rotating file logging..</td>
+</tr>
+<tr>
+  <td>7</td>
+  <td><code>Provider-independent LLM client with retries and usage tracking.</code><br><small style="color:var(--muted)">llm/client.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Provider-independent LLM client with retries and usage tracking..</td>
+</tr>
+<tr>
+  <td>8</td>
+  <td><code>litellm</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>client.py</code><br><small style="color:var(--muted)">llm/client.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>litellm node in project.</td>
+</tr>
+<tr>
+  <td>9</td>
+  <td><code>logging_handlers</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>logging_config.py</code><br><small style="color:var(--muted)">config/logging_config.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>logging_handlers node in project.</td>
+</tr>
+<tr>
+  <td>10</td>
+  <td><code>tenacity</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>client.py</code><br><small style="color:var(--muted)">llm/client.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>tenacity node in project.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>config/logging_config.py</code></td><td>4 nodes</td></tr>
+<tr><td><code>llm/client.py</code></td><td>2 nodes</td></tr>
+<tr><td><code>config/__init__.py</code></td><td>1 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: imports x5, explains x3, contains x1, imports x1. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 10. Company Profilepy Tools ====== -->
+<h2 id="company-profilepy-tools">10. Company Profilepy Tools</h2>
+<p>Company Profilepy Tools groups implementation around company, profilepy, tools, profile, mostly in tools/company_profile.py. This section covers 6 nodes and 6 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: Company Profilepy Tools (6 nodes, 6 edges)
+    subgraph company_profilepy_tools_tools_company_profile_py_4e851bd9["tools/company_profile.py"]
+        tools_company_profile_07538c82("company_profile.py")
+        tools_company_profile_get_company_profile_f7a73632("get_company_profile()<br/><small>tools/company_profile.py</small>")
+        tools_company_profile_rationale_1_28dc3f1a("Company profile tool for financial rese...<br/><small>tools/company_profile.py</small>")
+        tools_company_profile_rationale_74_da439368("Return a profile for a ticker, using cu...<br/><small>tools/company_profile.py</small>")
+    end
+    subgraph company_profilepy_tools_External_generated_8ab46cdb["External / generated"]
+        yfinance_4ccaf34f("yfinance")
+        tools_company_profile_py_any_3f7a07e0("Any")
+    end
+    tools_company_profile_get_company_profile_f7a73632 -->|calls| yfinance_4ccaf34f
+    tools_company_profile_07538c82 -->|imports| yfinance_4ccaf34f
+    class tools_company_profile_07538c82 module;
+    class tools_company_profile_get_company_profile_f7a73632 function;
+    class tools_company_profile_rationale_1_28dc3f1a concept;
+    class tools_company_profile_rationale_74_da439368 concept;
+    class yfinance_4ccaf34f function;
+    class tools_company_profile_py_any_3f7a07e0 klass;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>get_company_profile()</code><br><small style="color:var(--muted)">tools/company_profile.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>build_default_registry()</code><br><small style="color:var(--muted)">tools/tool_registry.py</small><br><code>tool_registry.py</code><br><small style="color:var(--muted)">tools/tool_registry.py</small></td>
+  <td><code>yfinance</code></td>
+  <td>get_company_profile() node in tools/company_profile.py.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>company_profile.py</code><br><small style="color:var(--muted)">tools/company_profile.py</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td><code>tool_registry.py</code><br><small style="color:var(--muted)">tools/tool_registry.py</small></td>
+  <td><code>typing</code><br><code>yfinance</code></td>
+  <td>Module file in tools/company_profile.py.</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><code>Any</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Any node in project.</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><code>Company profile tool for financial research.</code><br><small style="color:var(--muted)">tools/company_profile.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Company profile tool for financial research..</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><code>Return a profile for a ticker, using curated data with yfinance fallback.</code><br><small style="color:var(--muted)">tools/company_profile.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Return a profile for a ticker, using curated data with yfinance fallback..</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td><code>yfinance</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>company_profile.py</code><br><small style="color:var(--muted)">tools/company_profile.py</small><br><code>earnings.py</code><br><small style="color:var(--muted)">tools/earnings.py</small><br><code>financial_api.py</code><br><small style="color:var(--muted)">tools/financial_api.py</small><br>+2 more</td>
+  <td>No direct outbound edge</td>
+  <td>yfinance node in project.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>tools/company_profile.py</code></td><td>4 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: explains x2, calls x1, references x1, imports x1. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 11. Setuppy Setup Configuration ====== -->
+<h2 id="setuppy-setup-configuration">11. Setuppy Setup Configuration</h2>
+<p>Setuppy Setup Configuration groups implementation around setuppy, setup, configuration, autonomous, mostly in setup.py. This section covers 3 nodes and 2 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: Setuppy Setup Configuration (3 nodes, 2 edges)
+    subgraph setuppy_setup_configuration_setup_py_3a047d4b["setup.py"]
+        setup_80437a44("setup.py")
+        setup_rationale_1_7e6964b8("Setup configuration for the autonomous...<br/><small>setup.py</small>")
+    end
+    setuptools_bff5288d("setuptools")
+    setup_80437a44 -->|imports| setuptools_bff5288d
+    class setup_80437a44 module;
+    class setup_rationale_1_7e6964b8 concept;
+    class setuptools_bff5288d function;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>setup.py</code><br><small style="color:var(--muted)">setup.py</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>setuptools</code></td>
+  <td>Module file in setup.py.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>Setup configuration for the autonomous financial research agent package.</code><br><small style="color:var(--muted)">setup.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Setup configuration for the autonomous financial research agent package..</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><code>setuptools</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>setup.py</code><br><small style="color:var(--muted)">setup.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>setuptools node in project.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>setup.py</code></td><td>2 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: imports x1, explains x1. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 12. Evaluation ====== -->
+<h2 id="evaluation">12. Evaluation</h2>
+<p>Evaluation groups implementation around evaluation, mostly in evaluation/__init__.py. This section covers 1 nodes and 0 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: Evaluation (1 nodes, 0 edges)
+    evaluation_init_cb844e39("__init__.py")
+    class evaluation_init_cb844e39 module;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>evaluation/__init__.py</code><br><small style="color:var(--muted)">evaluation/__init__.py</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Module file in evaluation/__init__.py.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>evaluation/__init__.py</code></td><td>1 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: No high-confidence call edges detected. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 13. Llm ====== -->
+<h2 id="llm">13. Llm</h2>
+<p>Llm groups implementation around llm, mostly in llm/__init__.py. This section covers 1 nodes and 0 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: Llm (1 nodes, 0 edges)
+    llm_init_215287f1("__init__.py")
+    class llm_init_215287f1 module;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>llm/__init__.py</code><br><small style="color:var(--muted)">llm/__init__.py</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Module file in llm/__init__.py.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>llm/__init__.py</code></td><td>1 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: No high-confidence call edges detected. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 14. Memory ====== -->
+<h2 id="memory">14. Memory</h2>
+<p>Memory groups implementation around memory, mostly in memory/__init__.py. This section covers 1 nodes and 0 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: Memory (1 nodes, 0 edges)
+    memory_init_7c41b9dd("__init__.py")
+    class memory_init_7c41b9dd module;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>memory/__init__.py</code><br><small style="color:var(--muted)">memory/__init__.py</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Module file in memory/__init__.py.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>memory/__init__.py</code></td><td>1 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: No high-confidence call edges detected. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 15. Autonomous Financial Research ====== -->
+<h2 id="autonomous-financial-research">15. Autonomous Financial Research</h2>
+<p>Autonomous Financial Research groups implementation around autonomous, financial, research, agent, mostly in pyproject.toml. This section covers 1 nodes and 0 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: Autonomous Financial Research (1 nodes, 0 edges)
+    pkg_autonomous_financial_research_agent_48aae460("autonomous-financial-research-agent<br/><small>pyproject.toml</small>")
+    class pkg_autonomous_financial_research_agent_48aae460 module;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>autonomous-financial-research-agent</code><br><small style="color:var(--muted)">pyproject.toml</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>autonomous-financial-research-agent node in pyproject.toml.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>pyproject.toml</code></td><td>1 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: No high-confidence call edges detected. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 16. Other ====== -->
+<h2 id="other">16. Other</h2>
+<p>Other groups implementation around tools, synthesis, schemas, mostly in synthesis/__init__.py, tools/__init__.py, tools/schemas/__init__.py. This section covers 3 nodes and 0 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: Other (3 nodes, 0 edges)
+    synthesis_init_23acb780("__init__.py")
+    tools_init_0df48e5f("__init__.py")
+    tools_schemas_init_62be44d0("__init__.py")
+    class synthesis_init_23acb780 module;
+    class tools_init_0df48e5f module;
+    class tools_schemas_init_62be44d0 module;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>synthesis/__init__.py</code><br><small style="color:var(--muted)">synthesis/__init__.py</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Module file in synthesis/__init__.py.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>tools/__init__.py</code><br><small style="color:var(--muted)">tools/__init__.py</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Module file in tools/__init__.py.</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><code>schemas/__init__.py</code><br><small style="color:var(--muted)">tools/schemas/__init__.py</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Module file in tools/schemas/__init__.py.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>synthesis/__init__.py</code></td><td>1 nodes</td></tr>
+<tr><td><code>tools/__init__.py</code></td><td>1 nodes</td></tr>
+<tr><td><code>tools/schemas/__init__.py</code></td><td>1 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: No high-confidence call edges detected. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<h2 id="stats">Project Statistics</h2>
+
+<div class="grid">
+  <div class="card">
+    <h4>Graph</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><td>Nodes</td><td>538</td></tr>
+      <tr><td>Edges</td><td>1012</td></tr>
+      <tr><td>Hyperedges</td><td>0</td></tr>
+      <tr><td>Communities</td><td>32</td></tr>
+      <tr><td>Documented Sections</td><td>15</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Edge Confidence</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><td>EXTRACTED</td><td>907</td></tr>
+      <tr><td>INFERRED</td><td>105</td></tr>
+      <tr><td>AMBIGUOUS</td><td>0</td></tr>
+    </table>
+  </div>
+</div>
+
+<div style="text-align:center; padding:40px 0; color: var(--muted); font-size:0.9rem;">
+  <p>Project1A-PrashantBastola-AutonomousFinancialResearchAgent — Architecture Documentation</p>
+  <p>Generated: 2026-10-25 19:55 UTC · graphify callflow-html</p>
+</div>
+
+</div><!-- .container -->
+
+<script>
+(function () {
+  const mermaidConfig = {
+    startOnLoad: false,
+    theme: 'dark',
+    securityLevel: 'loose',
+    flowchart: { htmlLabels: true, useMaxWidth: true },
+    themeVariables: {
+      primaryColor: '#1e293b',
+      primaryTextColor: '#e2e8f0',
+      primaryBorderColor: '#38bdf8',
+      secondaryColor: '#0f172a',
+      tertiaryColor: '#334155',
+      lineColor: '#64748b',
+      textColor: '#e2e8f0',
+    }
+  };
+
+  mermaid.initialize(mermaidConfig);
+
+  function clamp(value, min, max) {
+    return Math.min(max, Math.max(min, value));
+  }
+
+  function enhanceMermaidDiagrams() {
+    document.querySelectorAll('.mermaid').forEach((container) => {
+      if (container.dataset.zoomReady === 'true') return;
+      const svg = container.querySelector('svg');
+      if (!svg) return;
+
+      container.dataset.zoomReady = 'true';
+      container.classList.add('is-enhanced');
+
+      const viewport = document.createElement('div');
+      viewport.className = 'mermaid-viewport';
+      svg.parentNode.insertBefore(viewport, svg);
+      viewport.appendChild(svg);
+
+      const toolbar = document.createElement('div');
+      toolbar.className = 'mermaid-toolbar';
+      toolbar.innerHTML = [
+        '<button type="button" data-action="zoom-out" title="Zoom out">-</button>',
+        '<span class="zoom-level" data-role="level">100%</span>',
+        '<button type="button" data-action="zoom-in" title="Zoom in">+</button>',
+        '<button type="button" data-action="fit" title="Fit width">Fit</button>',
+        '<button type="button" data-action="reset" title="Reset view">Reset</button>'
+      ].join('');
+      container.insertBefore(toolbar, viewport);
+
+      const state = { scale: 1, x: 0, y: 0, dragging: false, startX: 0, startY: 0, originX: 0, originY: 0 };
+      const level = toolbar.querySelector('[data-role="level"]');
+
+      function applyTransform() {
+        svg.style.transform = `translate(${state.x}px, ${state.y}px) scale(${state.scale})`;
+        level.textContent = `${Math.round(state.scale * 100)}%`;
+      }
+
+      function zoomBy(delta) {
+        state.scale = clamp(state.scale + delta, 0.25, 3);
+        applyTransform();
+      }
+
+      function reset() {
+        state.scale = 1;
+        state.x = 0;
+        state.y = 0;
+        applyTransform();
+      }
+
+      function fitWidth() {
+        const rawWidth = svg.viewBox && svg.viewBox.baseVal && svg.viewBox.baseVal.width
+          ? svg.viewBox.baseVal.width
+          : svg.getBoundingClientRect().width / state.scale;
+        if (!rawWidth) {
+          reset();
+          return;
+        }
+        state.scale = clamp((viewport.clientWidth - 48) / rawWidth, 0.25, 1.4);
+        state.x = 0;
+        state.y = 0;
+        applyTransform();
+      }
+
+      toolbar.addEventListener('click', (event) => {
+        const button = event.target.closest('button[data-action]');
+        if (!button) return;
+        const action = button.dataset.action;
+        if (action === 'zoom-in') zoomBy(0.15);
+        if (action === 'zoom-out') zoomBy(-0.15);
+        if (action === 'fit') fitWidth();
+        if (action === 'reset') reset();
+      });
+
+      viewport.addEventListener('wheel', (event) => {
+        if (!event.ctrlKey && !event.metaKey) return;
+        event.preventDefault();
+        zoomBy(event.deltaY < 0 ? 0.1 : -0.1);
+      }, { passive: false });
+
+      viewport.addEventListener('pointerdown', (event) => {
+        if (event.button !== 0) return;
+        state.dragging = true;
+        state.startX = event.clientX;
+        state.startY = event.clientY;
+        state.originX = state.x;
+        state.originY = state.y;
+        viewport.classList.add('is-dragging');
+        viewport.setPointerCapture(event.pointerId);
+      });
+
+      viewport.addEventListener('pointermove', (event) => {
+        if (!state.dragging) return;
+        state.x = state.originX + event.clientX - state.startX;
+        state.y = state.originY + event.clientY - state.startY;
+        applyTransform();
+      });
+
+      function endDrag(event) {
+        if (!state.dragging) return;
+        state.dragging = false;
+        viewport.classList.remove('is-dragging');
+        if (viewport.hasPointerCapture(event.pointerId)) {
+          viewport.releasePointerCapture(event.pointerId);
+        }
+      }
+
+      viewport.addEventListener('pointerup', endDrag);
+      viewport.addEventListener('pointercancel', endDrag);
+      applyTransform();
+    });
+  }
+
+  function renderMermaid() {
+    const result = mermaid.run
+      ? mermaid.run({ querySelector: '.mermaid' })
+      : Promise.resolve();
+    Promise.resolve(result)
+      .then(enhanceMermaidDiagrams)
+      .catch((error) => {
+        console.error('Mermaid render failed:', error);
+        enhanceMermaidDiagrams();
+      });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', renderMermaid);
+  } else {
+    renderMermaid();
+  }
+})();
+</script>
+
+</body>
+</html>
