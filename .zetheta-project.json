@@ -1,22 +1,21 @@
 {
-  "intern_identifier": "",
+  "intern_identifier": "bastolaprashant0919",
   "intern_name": "Prashant Bastola",
-  "intern_email": "",
+  "intern_email": "bastolaprashant0919@gmail.com",
   "project_code": "1A",
   "project_title": "Autonomous Financial Research Agent with Multi-Source Synthesis",
   "submission_type": "github",
-  "submission_date": "",
+  "submission_date": "2026-10-25T17:35:00Z",
   "tech_stack": [
     "Python",
-    "LangGraph",
-    "LangChain",
-    "OpenAI",
+    "LangChain/LangGraph",
+    "OpenAI/Anthropic API",
     "Chroma",
     "SEC EDGAR API",
-    "Financial Data API"
+    "Financial Data API (yfinance)"
   ],
   "duration_days": 15,
-  "github_repo_url": "",
+  "github_repo_url": "https://github.com/ZethetaIntern/Project1A-PrashantBastola-AutonomousFinancialResearchAgent",
   "assessment_criteria": {
     "architecture_design": true,
     "tool_orchestration": true,
