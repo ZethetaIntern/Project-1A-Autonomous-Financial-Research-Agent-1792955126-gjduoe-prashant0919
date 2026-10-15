@@ -136,11 +136,15 @@ class FinancialResearchAgent:
 
 
 
+            tokens_to_request = (
+                max(self.max_tokens, 2048) if synthesis_only else self.max_tokens
+            )
+
             try:
                 response = self.llm_client.complete(
                     prompt=prompt,
                     system_prompt=system_prompt,
-                    max_tokens=self.max_tokens,
+                    max_tokens=tokens_to_request,
                 )
                 parsed = parse_response(response.text)
 
@@ -307,11 +311,12 @@ def create_agent(
     max_iterations: int = 5,
     max_tokens: int = 800,
     allowed_tools: set[str] | None = None,
+    llm_client: LLMClient | None = None,
 ) -> FinancialResearchAgent:
-    """Create an agent using the default LLM client and tool registry."""
+    """Create an agent using the default or provided LLM client and tool registry."""
 
     return FinancialResearchAgent(
-        llm_client=LLMClient(),
+        llm_client=llm_client or LLMClient(),
         tool_registry=build_default_registry(),
         max_iterations=max_iterations,
         max_tokens=max_tokens,

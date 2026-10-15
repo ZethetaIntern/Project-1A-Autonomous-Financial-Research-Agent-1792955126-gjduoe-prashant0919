@@ -43,25 +43,21 @@ class LLMResponse:
 
 
 def _is_retryable(exc: BaseException) -> bool:
-    """Retry transient network and server errors, but not rate limits."""
+    """Retry transient network, server errors, and rate limits (Section A4.3)."""
     if isinstance(exc, (ValueError, TypeError)):
         return False
 
     status_code = getattr(exc, "status_code", None)
 
-    # Do not immediately retry rate limits; surface them to the caller.
-    if status_code == 429:
-        return False
-
-    # Retry temporary server and gateway errors.
-    if isinstance(status_code, int) and status_code >= 500:
+    # Retry temporary server errors, gateway errors, and rate limits
+    if isinstance(status_code, int) and (status_code >= 500 or status_code == 429):
         return True
 
-    # Retry connection failures and timeouts.
+    # Retry connection failures, timeouts, and rate limits
     name = type(exc).__name__.lower()
     return any(
         marker in name
-        for marker in ("timeout", "connection", "internalserver")
+        for marker in ("timeout", "connection", "internalserver", "ratelimit")
     )
 
 
@@ -69,9 +65,13 @@ def _is_retryable(exc: BaseException) -> bool:
 class LLMClient:
     """Call multiple LLM providers through LiteLLM."""
 
-    def __init__(self) -> None:
-        self.provider = settings.LLM_PROVIDER
-        self.model = settings.LLM_MODEL
+    def __init__(
+        self,
+        provider: Optional[str] = None,
+        model: Optional[str] = None,
+    ) -> None:
+        self.provider = provider or settings.LLM_PROVIDER
+        self.model = model or settings.LLM_MODEL
 
         self.total_input_tokens = 0
         self.total_output_tokens = 0
@@ -79,16 +79,32 @@ class LLMClient:
         self.request_count = 0
 
     def _run_with_retry(self, operation):
-        """Retry transient failures with exponential backoff."""
+        """Retry transient failures and rate limits with adaptive backoff."""
+        import re
+        base_wait = wait_exponential(multiplier=1, min=1, max=16)
+
+        def _adaptive_wait(retry_state):
+            exc = retry_state.outcome.exception() if retry_state.outcome else None
+            if exc:
+                msg = str(exc)
+                if "try again in" in msg:
+                    match = re.search(r"try again in ([\d\.]+)s", msg)
+                    if match:
+                        return float(match.group(1)) + 1.5
+                if "ratelimit" in type(exc).__name__.lower():
+                    return 25.0
+            return base_wait(retry_state)
+
         retryer = Retrying(
-            stop=stop_after_attempt(settings.MAX_RETRIES + 1),
-            wait=wait_exponential(multiplier=1, min=1, max=8),
+            stop=stop_after_attempt(max(settings.MAX_RETRIES + 1, 4)),
+            wait=_adaptive_wait,
             retry=retry_if_exception(_is_retryable),
             before_sleep=lambda state: logger.warning(
-                "LLM request failed; retrying attempt %s of %s: %s",
+                "LLM attempt %s failed (%s). Retrying...",
                 state.attempt_number,
-                settings.MAX_RETRIES + 1,
-                state.outcome.exception() if state.outcome else "unknown error",
+                type(state.outcome.exception()).__name__
+                if state.outcome and state.outcome.exception()
+                else "error",
             ),
             reraise=True,
         )

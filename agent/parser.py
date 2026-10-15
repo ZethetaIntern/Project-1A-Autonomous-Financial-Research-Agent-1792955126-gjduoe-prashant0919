@@ -2,6 +2,7 @@
 
 import json
 import logging
+import re
 from dataclasses import dataclass
 from typing import Any
 
@@ -30,15 +31,61 @@ def parse_response(text: str) -> ParsedResponse:
 
     cleaned = text.strip()
 
+    # Extract content from XML tool tags if present (e.g. <tool_call>...</tool_call> or <action>...</action>)
+    xml_match = re.search(
+        r"<(?:tool_call|action)>(.*?)</(?:tool_call|action)>",
+        cleaned,
+        re.DOTALL | re.IGNORECASE,
+    )
+    if xml_match:
+        cleaned = xml_match.group(1).strip()
+    else:
+        # Strip unclosed or isolated tags if present at edges
+        cleaned = re.sub(r"^<(?:tool_call|action)>\s*", "", cleaned, flags=re.IGNORECASE)
+        cleaned = re.sub(r"\s*</(?:tool_call|action)>$", "", cleaned, flags=re.IGNORECASE).strip()
+
     if cleaned.startswith("```"):
         lines = cleaned.splitlines()
         if len(lines) < 3 or not lines[-1].strip().startswith("```"):
             raise ResponseParseError("Markdown code fence is not properly closed.")
         cleaned = "\n".join(lines[1:-1]).strip()
 
+    # Handle inner code fences if previously wrapped in XML tags
+    if cleaned.startswith("```"):
+        lines = cleaned.splitlines()
+        if len(lines) >= 3 and lines[-1].strip().startswith("```"):
+            cleaned = "\n".join(lines[1:-1]).strip()
+
+    # Check for embedded json code fence if text contains surrounding commentary
+    if not cleaned.startswith("{") and "```" in cleaned:
+        code_match = re.search(r"```(?:json)?\s*(\{.*?\})\s*```", cleaned, re.DOTALL)
+        if code_match:
+            candidate = code_match.group(1).strip()
+            try:
+                test_payload = json.loads(candidate)
+                if isinstance(test_payload, dict) and any(
+                    k in test_payload for k in ("action", "tool_call", "name", "type")
+                ):
+                    cleaned = candidate
+            except json.JSONDecodeError:
+                pass
+
     try:
         payload = json.loads(cleaned)
     except json.JSONDecodeError as exc:
+        # Recover gracefully if a final answer JSON was truncated mid-string by token limits
+        answer_match = re.search(r'["\']answer["\']\s*:\s*["\'](.*)', cleaned, re.DOTALL)
+        if answer_match:
+            recovered = answer_match.group(1).rstrip()
+            recovered = re.sub(r'["\']\s*\}?\s*$', '', recovered)
+            recovered = (
+                recovered.replace('\\n', '\n')
+                .replace('\\"', '"')
+                .replace('\\t', '\t')
+            )
+            if recovered.strip():
+                return ParsedResponse(response_type="final", content=recovered.strip())
+
         if cleaned.startswith(("{", "[")):
             raise ResponseParseError("LLM returned malformed JSON.") from exc
         return ParsedResponse(response_type="final", content=cleaned)
@@ -48,6 +95,7 @@ def parse_response(text: str) -> ParsedResponse:
 
     # Preferred format: {"action": "execute", "name": ..., "arguments": ...}
     # Legacy format remains supported: {"tool_call": {...}}
+    # Direct format supported: {"name": ..., "arguments": {...}}
     if payload.get("action") == "execute":
         name = payload.get("name")
         arguments = payload.get("arguments", {})
@@ -57,6 +105,9 @@ def parse_response(text: str) -> ParsedResponse:
             raise ResponseParseError("'tool_call' must be an object.")
         name = call.get("name")
         arguments = call.get("arguments", {})
+    elif "name" in payload and isinstance(payload.get("arguments"), dict):
+        name = payload.get("name")
+        arguments = payload.get("arguments", {})
     else:
         name = None
         arguments = {}

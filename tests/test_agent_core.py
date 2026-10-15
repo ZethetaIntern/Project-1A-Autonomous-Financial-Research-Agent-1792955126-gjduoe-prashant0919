@@ -163,3 +163,49 @@ def test_agent_continues_after_tool_failure(mock_registry):
     assert "tool failed" in result["answer"].lower()
     assert len(result["tool_calls"]) == 1
     assert result["tool_calls"][0]["result"]["success"] is False
+
+
+def test_parser_handles_xml_tool_call_tag():
+    from agent.parser import parse_response
+
+    raw_xml = (
+        "<tool_call>\n"
+        '{"name": "company_profile", "arguments": {"ticker": "TSLA"}}\n'
+        "</tool_call>"
+    )
+    parsed = parse_response(raw_xml)
+    assert parsed.response_type == "tool_call"
+    assert parsed.tool_name == "company_profile"
+    assert parsed.arguments == {"ticker": "TSLA"}
+
+
+def test_parser_handles_xml_with_markdown_fence():
+    from agent.parser import parse_response
+
+    raw_xml = (
+        "<tool_call>\n"
+        "```json\n"
+        '{"action": "execute", "name": "sec_edgar", "arguments": {"ticker": "TSLA"}}\n'
+        "```\n"
+        "</tool_call>"
+    )
+    parsed = parse_response(raw_xml)
+    assert parsed.response_type == "tool_call"
+    assert parsed.tool_name == "sec_edgar"
+    assert parsed.arguments == {"ticker": "TSLA"}
+
+
+def test_parser_handles_commentary_with_json_fence():
+    from agent.parser import parse_response
+
+    raw = (
+        "I will fetch the SEC 10-K filing for Tesla.\n"
+        "```json\n"
+        '{"action": "execute", "name": "sec_edgar", "arguments": {"ticker": "TSLA"}}\n'
+        "```"
+    )
+    parsed = parse_response(raw)
+    assert parsed.response_type == "tool_call"
+    assert parsed.tool_name == "sec_edgar"
+    assert parsed.arguments == {"ticker": "TSLA"}
+
