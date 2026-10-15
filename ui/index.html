@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ARA-1: Autonomous Financial Research Agent Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+
+  <!-- App Header -->
+  <header class="app-header">
+    <div class="header-left">
+      <div class="logo-box">
+        <span class="logo-icon">📊</span>
+      </div>
+      <div>
+        <div class="app-title-row">
+          <h1 class="app-title">ARA-1 Research Console</h1>
+          <span class="pill pill-version">v1.0 Institutional</span>
+          <span class="status-indicator">
+            <span class="status-dot"></span>
+            <span id="agent-status-text">System Active</span>
+          </span>
+        </div>
+        <p class="app-subtitle">Autonomous Financial Research Agent with Multi-Source Synthesis &bull; QuantumEdge Research</p>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="metric-pill">
+        <span class="metric-label">RQB Score</span>
+        <span class="metric-val" id="header-rqb-score">94.56/100</span>
+      </div>
+      <div class="metric-pill">
+        <span class="metric-label">Pass Rate</span>
+        <span class="metric-val text-success">49/49 (100%)</span>
+      </div>
+      <div class="metric-pill">
+        <span class="metric-label">Active Model</span>
+        <span class="metric-val text-accent" id="header-model-name">groq/qwen3.8-27b</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Navigation Bar -->
+  <nav class="main-nav">
+    <button class="nav-btn active" data-tab="tab-console">
+      <span class="nav-icon">⚡</span> Live Research Console
+    </button>
+    <button class="nav-btn" data-tab="tab-challenges">
+      <span class="nav-icon">📑</span> Challenges Gallery (C1–C8)
+    </button>
+    <button class="nav-btn" data-tab="tab-rqb">
+      <span class="nav-icon">🏆</span> RQB Quality Scorecard
+    </button>
+    <button class="nav-btn" data-tab="tab-tools">
+      <span class="nav-icon">🛠️</span> 12-Tool Registry &amp; Circuits
+    </button>
+    <button class="nav-btn" data-tab="tab-conflict">
+      <span class="nav-icon">⚖️</span> 6-Step Conflict Sandbox
+    </button>
+    <button class="nav-btn" data-tab="tab-calculator">
+      <span class="nav-icon">🧮</span> Valuation Engine
+    </button>
+    <a href="/graphify/mermaid_architecture.html" target="_blank" class="nav-btn nav-link-external">
+      <span class="nav-icon">📐</span> Architecture Visualizer ↗
+    </a>
+    <a href="/graphify/graph.html" target="_blank" class="nav-btn nav-link-external">
+      <span class="nav-icon">🌐</span> Knowledge Graph ↗
+    </a>
+  </nav>
+
+  <!-- Main Content Container -->
+  <main class="app-main">
+
+    <!-- TAB 1: Live Research Console -->
+    <section id="tab-console" class="tab-pane active">
+      <div class="grid-2col">
+        
+        <!-- Left: Input & Execution Control Panel -->
+        <div class="card panel-controls">
+          <div class="card-header">
+            <h2 class="card-title"><span>🎯</span> Query Configuration</h2>
+            <span class="badge badge-blue">ReAct Engine</span>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="query-input">Research Objective / Prompt</label>
+            <textarea id="query-input" class="form-textarea" rows="4" placeholder="Enter financial research query, e.g. 'Produce a comprehensive risk assessment for Tesla Inc. covering financial, operational, and regulatory risks...'"></textarea>
+          </div>
+
+          <!-- Quick Presets -->
+          <div class="presets-section">
+            <label class="form-label">Challenge Presets (1-Click Run)</label>
+            <div class="presets-chips">
+              <button class="chip-btn" data-preset="1">C1: Microsoft Profile</button>
+              <button class="chip-btn" data-preset="2">C2: Apple Q3 Earnings</button>
+              <button class="chip-btn" data-preset="3">C3: Tesla Risk Assessment</button>
+              <button class="chip-btn" data-preset="4">C4: Cloud Hyperscalers</button>
+              <button class="chip-btn" data-preset="5">C5: Palantir Contradictions</button>
+              <button class="chip-btn" data-preset="6">C6: Banks Disambiguation</button>
+              <button class="chip-btn" data-preset="7">C7: Big Tech Vector Memory</button>
+              <button class="chip-btn" data-preset="8">C8: NVIDIA 50% Degradation</button>
+            </div>
+          </div>
+
+          <div class="settings-row">
+            <div class="form-group flex-1">
+              <label class="form-label" for="iteration-slider">Max ReAct Iterations: <span id="iter-val" class="text-accent">4</span></label>
+              <input type="range" id="iteration-slider" class="form-range" min="1" max="8" value="4">
+            </div>
+            <div class="form-group flex-1">
+              <label class="form-label">Execution Mode</label>
+              <div class="select-wrapper">
+                <select id="execution-mode" class="form-select">
+                  <option value="autonomous">Fully Autonomous ReAct</option>
+                  <option value="synthesis-only">Direct Multi-Source Synthesis</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Allowed Tools Selector -->
+          <div class="form-group">
+            <label class="form-label">Allowed Research Tools</label>
+            <div class="tools-checkbox-grid" id="tools-selector">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+
+          <!-- Action Button -->
+          <div class="action-row">
+            <button id="run-agent-btn" class="btn btn-primary btn-glow">
+              <span class="btn-spinner hidden" id="run-spinner"></span>
+              <span id="run-btn-text">🚀 Run Autonomous Agent</span>
+            </button>
+            <button id="clear-console-btn" class="btn btn-secondary">Clear</button>
+          </div>
+        </div>
+
+        <!-- Right: Execution Log & Synthesis Output -->
+        <div class="card panel-output">
+          <div class="card-header">
+            <h2 class="card-title"><span>📝</span> Research Report &amp; Reasoning Trace</h2>
+            <div class="output-actions">
+              <span id="run-timer" class="timer-badge hidden">Running: 0.0s</span>
+              <button id="copy-report-btn" class="btn btn-sm btn-secondary">Copy Markdown</button>
+            </div>
+          </div>
+
+          <!-- Execution Status Banner -->
+          <div id="execution-banner" class="status-banner banner-idle">
+            Ready to execute. Enter a prompt or select a challenge preset to launch the autonomous research workflow.
+          </div>
+
+          <!-- Step Progress Feed -->
+          <div class="trace-feed" id="trace-feed">
+            <div class="trace-empty">No active execution. Output and step-by-step tool observations will stream here.</div>
+          </div>
+
+          <!-- Rendered Report -->
+          <div class="report-container">
+            <div class="report-header-bar">
+              <span class="report-tag">Synthesized Research Document</span>
+              <span id="report-meta" class="report-meta">0 Tool Invocations</span>
+            </div>
+            <div id="report-markdown" class="markdown-body">
+              <p class="placeholder-text">The synthesized financial research report will appear here upon completion.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- TAB 2: Challenges Gallery (C1–C8) -->
+    <section id="tab-challenges" class="tab-pane">
+      <div class="grid-gallery">
+        <!-- Sidebar: Challenge Selector -->
+        <div class="card gallery-sidebar">
+          <div class="card-header">
+            <h2 class="card-title"><span>📂</span> 8 Progressive Challenges</h2>
+          </div>
+          <div class="challenge-nav-list" id="challenge-list">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+
+        <!-- Detail: Full Challenge Report -->
+        <div class="card gallery-content">
+          <div class="card-header">
+            <div>
+              <h2 class="card-title" id="challenge-detail-title">Select a Challenge</h2>
+              <p class="card-subtitle" id="challenge-detail-meta">Review institutional-grade reports produced across the 15-day timeline.</p>
+            </div>
+            <div class="header-actions">
+              <button id="view-raw-json-btn" class="btn btn-sm btn-secondary">View Raw Trace JSON</button>
+            </div>
+          </div>
+
+          <!-- Raw Trace Modal / Drawer -->
+          <div id="raw-json-panel" class="raw-json-panel hidden">
+            <div class="raw-json-header">
+              <span>Execution Trace JSON (tool calls, arguments, timings)</span>
+              <button id="close-raw-json-btn" class="close-btn">&times;</button>
+            </div>
+            <pre id="raw-json-code" class="code-block"></pre>
+          </div>
+
+          <!-- Markdown Content -->
+          <div id="challenge-detail-content" class="markdown-body challenge-doc">
+            <p class="placeholder-text">Loading challenge report...</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 3: RQB Quality Scorecard -->
+    <section id="tab-rqb" class="tab-pane">
+      <div class="rqb-dashboard">
+        
+        <!-- Top: Composite Score & Persona Dials -->
+        <div class="card rqb-overview-card">
+          <div class="rqb-hero">
+            <div class="rqb-badge-col">
+              <div class="badge-trophy">🏆</div>
+              <div class="rqb-hero-score">94.56<span class="score-denom">/100</span></div>
+              <div class="rqb-hero-label">Composite Research Quality Board Score</div>
+              <p class="rqb-hero-desc">Surpasses Human Analyst Benchmark Baseline (82.0) across all 8 Progressive Challenges</p>
+            </div>
+            <div class="rqb-personas-grid">
+              
+              <!-- Persona 1 -->
+              <div class="persona-card">
+                <div class="persona-header">
+                  <span class="persona-avatar">🦅</span>
+                  <div>
+                    <h3 class="persona-name">Dr. Sarah Chen</h3>
+                    <span class="persona-role">Accuracy Hawk (40% Weight)</span>
+                  </div>
+                </div>
+                <div class="persona-score text-success">99.72<span class="score-small">/100</span></div>
+                <p class="persona-criteria">Zero tolerance for hallucinations. Audited 10-K verification &amp; SEC accession grounding.</p>
+              </div>
+
+              <!-- Persona 2 -->
+              <div class="persona-card">
+                <div class="persona-header">
+                  <span class="persona-avatar">🎯</span>
+                  <div>
+                    <h3 class="persona-name">Marcus Thompson</h3>
+                    <span class="persona-role">Insight Hunter (35% Weight)</span>
+                  </div>
+                </div>
+                <div class="persona-score text-accent">90.81<span class="score-small">/100</span></div>
+                <p class="persona-criteria">DCF sensitivity modeling, CAGR growth drivers, and forward-looking guidance triangulation.</p>
+              </div>
+
+              <!-- Persona 3 -->
+              <div class="persona-card">
+                <div class="persona-header">
+                  <span class="persona-avatar">🛡️</span>
+                  <div>
+                    <h3 class="persona-name">Priya Sharma</h3>
+                    <span class="persona-role">Systems Thinker (25% Weight)</span>
+                  </div>
+                </div>
+                <div class="persona-score text-purple">91.54<span class="score-small">/100</span></div>
+                <p class="persona-criteria">100% graceful degradation under 50% tool failure; circuit breakers &amp; fallback disclosures.</p>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom: 22 Metrics Breakdown Table -->
+        <div class="card rqb-metrics-card">
+          <div class="card-header">
+            <h2 class="card-title"><span>📊</span> 22 Research Quality Metrics Evaluation (Parts A–E)</h2>
+            <button id="refresh-rqb-btn" class="btn btn-sm btn-secondary">Re-evaluate Benchmark</button>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table" id="rqb-metrics-table">
+              <thead>
+                <tr>
+                  <th>Dimension</th>
+                  <th>Metric Code</th>
+                  <th>Quality Description</th>
+                  <th>Target Benchmark</th>
+                  <th>ARA-1 Performance</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Populated by JavaScript -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- TAB 4: 12-Tool Registry & Circuit Breakers -->
+    <section id="tab-tools" class="tab-pane">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title"><span>🛠️</span> Active Tool Registry &amp; Circuit Breakers</h2>
+            <p class="card-subtitle">All 12 tools validated with strict JSON Schemas, circuit breaker protection, and cascading fallbacks.</p>
+          </div>
+          <span class="badge badge-green">12 / 12 Operational</span>
+        </div>
+        <div class="tools-grid" id="tools-catalog">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 5: Conflict Resolution Sandbox -->
+    <section id="tab-conflict" class="tab-pane">
+      <div class="grid-2col">
+        
+        <!-- Left: Input Claims -->
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title"><span>⚖️</span> 6-Step Conflict Resolver Sandbox</h2>
+            <span class="badge badge-purple">Section A6.3 Protocol</span>
+          </div>
+          <p class="form-desc">Test the deterministic 5-tier regulatory hierarchy by pitting contradictory claims against each other.</p>
+          
+          <div class="form-group">
+            <label class="form-label">Metric Name</label>
+            <input type="text" id="cr-metric-name" class="form-input" value="Revenue">
+          </div>
+
+          <div class="claims-list" id="claims-input-list">
+            <!-- Sample Claim 1 -->
+            <div class="claim-card-input">
+              <div class="claim-card-top">
+                <span class="claim-tag">Claim 1 (Tier 1: Form 10-K Audited)</span>
+              </div>
+              <div class="grid-2col-compact">
+                <input type="text" class="form-input c-source" value="Tesla Form 10-K FY2023" placeholder="Source Name">
+                <input type="number" class="form-input c-value" value="96773" placeholder="Value ($M)">
+              </div>
+              <div class="grid-2col-compact mt-2">
+                <select class="form-select c-tier">
+                  <option value="10-K" selected>Form 10-K (Audited)</option>
+                  <option value="10-Q">Form 10-Q (Unaudited)</option>
+                  <option value="Press Release">Press Release</option>
+                  <option value="News">Financial News</option>
+                  <option value="Social">Social / Forum</option>
+                </select>
+                <input type="text" class="form-input c-period" value="FY2023" placeholder="Fiscal Period">
+              </div>
+            </div>
+
+            <!-- Sample Claim 2 -->
+            <div class="claim-card-input">
+              <div class="claim-card-top">
+                <span class="claim-tag claim-warn">Claim 2 (Tier 4: Financial Media)</span>
+              </div>
+              <div class="grid-2col-compact">
+                <input type="text" class="form-input c-source" value="TechBlog / Rumor Feed" placeholder="Source Name">
+                <input type="number" class="form-input c-value" value="99500" placeholder="Value ($M)">
+              </div>
+              <div class="grid-2col-compact mt-2">
+                <select class="form-select c-tier">
+                  <option value="10-K">Form 10-K (Audited)</option>
+                  <option value="10-Q">Form 10-Q (Unaudited)</option>
+                  <option value="Press Release">Press Release</option>
+                  <option value="News" selected>Financial News</option>
+                  <option value="Social">Social / Forum</option>
+                </select>
+                <input type="text" class="form-input c-period" value="FY2023" placeholder="Fiscal Period">
+              </div>
+            </div>
+          </div>
+
+          <div class="action-row">
+            <button id="resolve-conflict-btn" class="btn btn-primary">⚡ Resolve Discrepancy (6 Steps)</button>
+          </div>
+        </div>
+
+        <!-- Right: Step-by-Step Resolution Log -->
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title"><span>📋</span> Resolution Trace &amp; Statutory Provenance</h2>
+          </div>
+          <div id="conflict-result-box" class="conflict-result-box">
+            <div class="placeholder-text">Click 'Resolve Discrepancy' to view the 6-step arbitration protocol in action.</div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- TAB 6: Valuation & Ratio Engine -->
+    <section id="tab-calculator" class="tab-pane">
+      <div class="grid-2col">
+        <!-- DCF Valuation Calculator -->
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title"><span>💰</span> DCF Intrinsic Valuation Engine</h2>
+            <span class="badge badge-blue">calculation_engine</span>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Initial Free Cash Flow ($M)</label>
+            <input type="number" id="dcf-fcf" class="form-input" value="6200">
+          </div>
+          <div class="grid-2col-compact">
+            <div class="form-group">
+              <label class="form-label">Growth Rate Year 1–5 (%)</label>
+              <input type="number" id="dcf-growth" class="form-input" value="12" step="0.5">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Discount Rate / WACC (%)</label>
+              <input type="number" id="dcf-wacc" class="form-input" value="9.5" step="0.5">
+            </div>
+          </div>
+          <div class="grid-2col-compact">
+            <div class="form-group">
+              <label class="form-label">Terminal Growth Rate (%)</label>
+              <input type="number" id="dcf-terminal" class="form-input" value="3.0" step="0.25">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Forecast Horizon (Years)</label>
+              <input type="number" id="dcf-years" class="form-input" value="5">
+            </div>
+          </div>
+          <div class="action-row">
+            <button id="run-dcf-btn" class="btn btn-primary">Calculate Enterprise Value</button>
+          </div>
+          <div id="dcf-output" class="calc-result-box mt-3 hidden">
+            <!-- Results populated here -->
+          </div>
+        </div>
+
+        <!-- Financial Ratios & CAGR -->
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title"><span>📈</span> CAGR &amp; Financial Ratio Calculator</h2>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Calculation Type</label>
+            <select id="calc-type" class="form-select">
+              <option value="cagr">Compound Annual Growth Rate (CAGR)</option>
+              <option value="financial_ratio">Financial Ratios (Gross Margin, ROE, Debt/Equity)</option>
+            </select>
+          </div>
+          <div id="cagr-inputs">
+            <div class="grid-2col-compact">
+              <div class="form-group">
+                <label class="form-label">Beginning Value ($)</label>
+                <input type="number" id="cagr-start" class="form-input" value="53823">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Ending Value ($)</label>
+                <input type="number" id="cagr-end" class="form-input" value="96773">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Number of Periods (Years)</label>
+              <input type="number" id="cagr-periods" class="form-input" value="3">
+            </div>
+          </div>
+          <div class="action-row">
+            <button id="run-cagr-btn" class="btn btn-secondary">Compute Metric</button>
+          </div>
+          <div id="cagr-output" class="calc-result-box mt-3 hidden">
+            <!-- Results populated here -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="app-footer">
+    <div>Autonomous Financial Research Agent with Multi-Source Synthesis (ARA-1) &bull; QuantumEdge Research &copy; 2026</div>
+    <div>Intern: <strong>Prashant Bastola</strong> &bull; bastolaprashant0919@gmail.com</div>
+  </footer>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
