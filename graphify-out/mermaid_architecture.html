@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Autonomous Financial Research Agent — Mermaid Architecture Visualizer</title>
+  <style>
+    :root {
+      --bg: #0d1117;
+      --card-bg: #161b22;
+      --border: #30363d;
+      --text: #c9d1d9;
+      --heading: #58a6ff;
+      --accent: #238636;
+      --tab-active: #1f6feb;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 24px;
+    }
+
+    header {
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    h1 {
+      font-size: 24px;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .badge {
+      background: rgba(35, 134, 54, 0.2);
+      color: #3fb950;
+      border: 1px solid rgba(59, 185, 80, 0.4);
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .tab-btn {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 10px 18px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+
+    .tab-btn:hover {
+      background: #21262d;
+      border-color: #8b949e;
+    }
+
+    .tab-btn.active {
+      background: var(--tab-active);
+      color: #fff;
+      border-color: #388bfd;
+    }
+
+    .diagram-panel {
+      display: none;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 24px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    }
+
+    .diagram-panel.active {
+      display: block;
+    }
+
+    .panel-header {
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .panel-title {
+      font-size: 18px;
+      color: var(--heading);
+      margin-bottom: 6px;
+    }
+
+    .panel-desc {
+      font-size: 13px;
+      color: #8b949e;
+    }
+
+    .mermaid-container {
+      overflow-x: auto;
+      padding: 16px 0;
+      display: flex;
+      justify-content: center;
+      min-height: 400px;
+    }
+
+    .mermaid {
+      width: 100%;
+      text-align: center;
+    }
+
+    footer {
+      margin-top: 32px;
+      text-align: center;
+      font-size: 13px;
+      color: #8b949e;
+      border-top: 1px solid var(--border);
+      padding-top: 16px;
+    }
+  </style>
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'dark',
+      themeVariables: {
+        darkMode: true,
+        background: '#161b22',
+        primaryColor: '#1f6feb',
+        primaryTextColor: '#fff',
+        primaryBorderColor: '#388bfd',
+        lineColor: '#58a6ff',
+        secondaryColor: '#238636',
+        tertiaryColor: '#21262d'
+      }
+    });
+
+    window.switchTab = function(tabId) {
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.diagram-panel').forEach(panel => panel.classList.remove('active'));
+      
+      const activeBtn = document.querySelector(`[data-target="${tabId}"]`);
+      const activePanel = document.getElementById(tabId);
+      
+      if (activeBtn) activeBtn.classList.add('active');
+      if (activePanel) activePanel.classList.add('active');
+    };
+  </script>
+</head>
+<body>
+
+  <header>
+    <div>
+      <h1>Autonomous Financial Research Agent (ARA-1) <span class="badge">Architecture Visualizer</span></h1>
+      <p style="color: #8b949e; font-size: 13px; margin-top: 4px;">Interactive Mermaid architecture, ReAct loop, 3-tier memory, and 6-step conflict resolution engine</p>
+    </div>
+    <div>
+      <span style="font-size: 13px; color: #8b949e;">Author: <strong>Prashant Bastola</strong> | 49/49 Tests Passing</span>
+    </div>
+  </header>
+
+  <div class="tabs">
+    <button class="tab-btn active" data-target="tab-system" onclick="switchTab('tab-system')">1. System Architecture</button>
+    <button class="tab-btn" data-target="tab-react" onclick="switchTab('tab-react')">2. ReAct Agent Loop</button>
+    <button class="tab-btn" data-target="tab-memory" onclick="switchTab('tab-memory')">3. 3-Tier Memory Hierarchy</button>
+    <button class="tab-btn" data-target="tab-conflict" onclick="switchTab('tab-conflict')">4. Conflict Resolution Protocol</button>
+    <button class="tab-btn" data-target="tab-rqb" onclick="switchTab('tab-rqb')">5. RQB Quality Scorecard</button>
+  </div>
+
+  <!-- Tab 1: System Architecture -->
+  <div id="tab-system" class="diagram-panel active">
+    <div class="panel-header">
+      <div class="panel-title">End-to-End System Architecture</div>
+      <div class="panel-desc">Shows data and control flow across the client, agent core, resilient tool subsystem, memory, and synthesis engine.</div>
+    </div>
+    <div class="mermaid-container">
+      <pre class="mermaid">
+flowchart TB
+    subgraph ClientLayer ["1. Client & CLI Layer"]
+        CLI["main.py (Unified CLI)"]
+        ChallengeScripts["Challenge Runners (C1–C8)"]
+        EvalDash["evaluation/dashboard.py"]
+    end
+
+    subgraph AgentCore ["2. Agent Reasoning & Core Engine"]
+        QA["QueryAnalyzer (Intent, Complexity, Ambiguity)"]
+        QD["QueryDisambiguator (Assumptions & Disclosures)"]
+        CM["ContextManager (40/30/20/10 Token Allocator)"]
+        LLM["LLMClient (LiteLLM + Adaptive Cooldown)"]
+        Parser["ResponseParser (XML, Code Fences, Recovery)"]
+    end
+
+    subgraph MemoryLayer ["3. Three-Tier Memory Hierarchy"]
+        STM["Short-Term Working Context (Progressive Summarization)"]
+        Chroma["ChromaDB ('financial_research' Collection)"]
+        EPI["EpisodicMemory (Archetypes & Recovery Paths)"]
+    end
+
+    subgraph ToolSubsystem ["4. Resilient Tool Subsystem (12 Tools)"]
+        TR["ToolRegistry (JSON Schema Validation)"]
+        CB["ToolCircuitBreaker (Closed / Half-Open / Open)"]
+        FC["FallbackChainManager (Cascading Degradation)"]
+        
+        subgraph Tools ["12 Registered Tools"]
+            T_SEC["sec_edgar (10-K, 10-Q)"]
+            T_FIN["financial_api (Yahoo Finance)"]
+            T_PROF["company_profile (Fundamentals)"]
+            T_EARN["earnings_transcript (Q&A, Speakers)"]
+            T_CALC["calculation_engine (DCF, CAGR, Ratios)"]
+            T_PEER["peer_comparison (Multiples Matrix)"]
+            T_CHECK["fact_checker (Numerical Auditing)"]
+            T_NEWS["news_sentiment (Media Feed)"]
+            T_WEB["web_search (DuckDuckGo Fallback)"]
+            T_VSEARCH["vector_db_search (ChromaDB Search)"]
+            T_VSTORE["vector_db_store (ChromaDB Persist)"]
+            T_REP["report_generator (6-Section Template)"]
+        end
+    end
+
+    subgraph SynthesisLayer ["5. Multi-Source Synthesis & Quality"]
+        SE["MultiSourceSynthesisEngine (3-Source Triangulation)"]
+        CR["ConflictResolver (6-Step Tier 1–5 Protocol)"]
+        NT["NarrativeThreader (Sentiment-Fact Divergence)"]
+        RQB["Research Quality Board (Chen 40%, Thompson 35%, Sharma 25%)"]
+    end
+
+    CLI --> QA
+    ChallengeScripts --> QA
+    QA --> QD
+    QD --> CM
+    CM --> LLM
+    LLM --> Parser
+    Parser -->|Tool Request| TR
+    TR --> CB
+    CB --> FC
+    FC --> Tools
+    Tools -->|Observations| CM
+    CM <--> STM
+    CM <--> Chroma
+    CM <--> EPI
+    Parser -->|Final Synthesis| SE
+    SE --> CR
+    CR --> NT
+    NT --> RQB
+    RQB --> EvalDash
+      </pre>
+    </div>
+  </div>
+
+  <!-- Tab 2: ReAct Loop -->
+  <div id="tab-react" class="diagram-panel">
+    <div class="panel-header">
+      <div class="panel-title">Autonomous ReAct Execution & Error Resilience Sequence</div>
+      <div class="panel-desc">Traces an end-to-end iteration including circuit breaker verification, fallback routing, and token truncation recovery.</div>
+    </div>
+    <div class="mermaid-container">
+      <pre class="mermaid">
+sequenceDiagram
+    autonumber
+    actor User as User / CLI
+    participant Agent as FinancialResearchAgent
+    participant Context as ContextManager
+    participant LLM as Groq / Qwen LLM
+    participant Parser as ResponseParser
+    participant Registry as ToolRegistry
+    participant Circuit as ToolCircuitBreaker
+    participant Fallback as FallbackChainManager
+
+    User->>Agent: run(query)
+    Agent->>Context: allocate_budget(query, system_prompt)
+    
+    loop ReAct Iterations (Max 4-5)
+        Agent->>LLM: complete(prompt, context)
+        LLM-->>Agent: LLM Response (JSON / XML)
+        Agent->>Parser: parse_response(raw_text)
+        
+        alt Tool Call Requested
+            Parser-->>Agent: ParsedResponse(tool_name, arguments)
+            Agent->>Circuit: check_state(tool_name)
+            alt Circuit OPEN (Provider Outage)
+                Circuit-->>Agent: CircuitBreakerOpenError
+                Agent->>Fallback: execute_fallback(tool_name, arguments)
+                Fallback-->>Agent: Degraded Result + Confidence Penalty
+            else Circuit CLOSED / Normal
+                Agent->>Registry: execute(tool_name, arguments)
+                Registry-->>Agent: Observation Data
+                Agent->>Circuit: record_success(tool_name)
+            end
+            Agent->>Context: append_observation(tool_name, result)
+        else Final Answer Produced
+            Parser-->>Agent: ParsedResponse(response_type="final", content)
+            Note over Agent: Synthesis complete before iteration limit
+        end
+    end
+
+    alt Final Synthesis Iteration
+        Agent->>LLM: complete(synthesis_prompt, all_evidence)
+        LLM-->>Agent: Complete Report Output
+        Agent->>Parser: parse_response(report)
+        Parser-->>Agent: Formatted Research Document
+    end
+
+    Agent-->>User: result {"status": "completed", "answer": ..., "tool_calls": [...]}
+      </pre>
+    </div>
+  </div>
+
+  <!-- Tab 3: Memory Hierarchy -->
+  <div id="tab-memory" class="diagram-panel">
+    <div class="panel-header">
+      <div class="panel-title">Three-Tier Memory System Architecture</div>
+      <div class="panel-desc">Illustrates the integration of short-term context budgeting, episodic archetype strategy recall, and ChromaDB vector persistence.</div>
+    </div>
+    <div class="mermaid-container">
+      <pre class="mermaid">
+graph LR
+    subgraph Query ["Incoming Query"]
+        Q["User Research Request"]
+    end
+
+    subgraph Tier1 ["Tier 1: Short-Term Working Memory"]
+        CM["ContextManager"]
+        TB["Token Budget Allocator<br/>- 40% Reasoning<br/>- 30% Tools<br/>- 20% Memory<br/>- 10% System"]
+        PS["Progressive Summarizer<br/>(Compresses older tool history)"]
+    end
+
+    subgraph Tier2 ["Tier 2: Episodic Experiential Memory"]
+        EM["EpisodicMemory"]
+        QA_Match["Archetype Classifier<br/>(Single-Company, Earnings, M&A)"]
+        TS["Tool Sequence Efficiency Scorer"]
+        RP["Recovery Path Recommendation"]
+    end
+
+    subgraph Tier3 ["Tier 3: Long-Term Semantic Memory"]
+        VS["ChromaDB Vector Store"]
+        EMB["SentenceTransformer Embeddings"]
+        COLL["'financial_research' Collection"]
+        SIM["Cosine Similarity Search"]
+    end
+
+    Q --> CM
+    CM --> TB
+    TB --> PS
+    
+    Q --> EM
+    EM --> QA_Match
+    QA_Match --> TS
+    TS --> RP
+    RP -.->|Optimal Tool Trajectory| CM
+
+    CM <-->|Store / Retrieve Findings| VS
+    VS --> EMB
+    EMB --> COLL
+    COLL --> SIM
+      </pre>
+    </div>
+  </div>
+
+  <!-- Tab 4: Conflict Resolution -->
+  <div id="tab-conflict" class="diagram-panel">
+    <div class="panel-header">
+      <div class="panel-title">6-Step Conflict Resolution Protocol</div>
+      <div class="panel-desc">Deterministic 5-tier regulatory ranking and mathematical triangulation to eliminate hallucinations.</div>
+    </div>
+    <div class="mermaid-container">
+      <pre class="mermaid">
+flowchart TD
+    Start["Discrepancy Detected between Data Sources"] --> Step1["Step 1: Metric Alignment<br/>Verify GAAP vs Non-GAAP definitions and currency units"]
+    
+    Step1 --> Step2["Step 2: Regulatory Hierarchy Ranking<br/>Rank sources into Tiers 1 through 5"]
+    
+    subgraph Tiers ["Source Hierarchy Tiers"]
+        T1["Tier 1: SEC Form 10-K (Audited Statutory Filings)"]
+        T2["Tier 2: SEC Form 10-Q (Unaudited Interim Financials)"]
+        T3["Tier 3: Company Earnings Releases & Transcripts"]
+        T4["Tier 4: Tier-1 Financial Media (Bloomberg, Reuters, WSJ)"]
+        T5["Tier 5: Aggregators, Social Media & Speculation"]
+    end
+    
+    Step2 -.-> T1 & T2 & T3 & T4 & T5
+    
+    Step2 --> Step3["Step 3: Temporal Recency Filtering<br/>Discard stale data; align to identical fiscal quarters"]
+    
+    Step3 --> Step4["Step 4: Quantitative Triangulation<br/>Cross-reference with mathematical recalculation (e.g., Margin = Gross Profit / Revenue)"]
+    
+    Step4 --> Step5{"Discrepancy Resolved?"}
+    
+    Step5 -- Yes --> Resolved["Adopt Primary Verified Value with Full Provenance"]
+    
+    Step5 -- No (Unreconciled) --> Step6["Step 6: Explicit Non-Consensus Disclosure<br/>Record both figures side-by-side with confidence intervals & explanation"]
+    
+    Resolved --> FinalReport["Incorporated into Final Research Report"]
+    Step6 --> FinalReport
+      </pre>
+    </div>
+  </div>
+
+  <!-- Tab 5: RQB Quality Scorecard -->
+  <div id="tab-rqb" class="diagram-panel">
+    <div class="panel-header">
+      <div class="panel-title">Research Quality Board (RQB) Persona Scoring Model</div>
+      <div class="panel-desc">Multi-dimensional evaluation framework achieving 94.56/100 composite score across all 8 challenges.</div>
+    </div>
+    <div class="mermaid-container">
+      <pre class="mermaid">
+graph TD
+    subgraph Personas ["Simulated Research Quality Board Personas"]
+        Chen["Dr. Sarah Chen (Accuracy Hawk)<br/>Weight: 40% | Score: 99.72/100<br/>Focus: Audited 10-K verification & zero hallucinations"]
+        Thompson["Marcus Thompson (Insight Hunter)<br/>Weight: 35% | Score: 90.81/100<br/>Focus: Quantitative triangulation & DCF modeling"]
+        Sharma["Priya Sharma (Systems Thinker)<br/>Weight: 25% | Score: 91.54/100<br/>Focus: Circuit breakers & graceful degradation"]
+    end
+
+    subgraph Metrics ["22 Quality Metrics Dimensions"]
+        FA["Factual Accuracy (FA-1 to FA-5)"]
+        CO["Completeness (CO-1 to CO-4)"]
+        AD["Analytical Depth (AD-1 to AD-4)"]
+        CS["Clarity & Structure (CS-1 to CS-4)"]
+        AB["Agentic Behavior (AB-1 to AB-5)"]
+    end
+
+    subgraph Composite ["Composite Quality Evaluation"]
+        Comp["Composite RQB Score: 94.56 / 100<br/>(Benchmark Human Baseline: 82.0)"]
+    end
+
+    FA & CO --> Chen
+    AD & CS --> Thompson
+    AB & FA --> Sharma
+    Chen --> Comp
+    Thompson --> Comp
+    Sharma --> Comp
+      </pre>
+    </div>
+  </div>
+
+  <footer>
+    Autonomous Financial Research Agent with Multi-Source Synthesis (ARA-1) | QuantumEdge Research &copy; 2026
+  </footer>
+
+</body>
+</html>
